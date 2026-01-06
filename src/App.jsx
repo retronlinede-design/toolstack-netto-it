@@ -2,18 +2,15 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 
 /**
  * ToolStack — Netto-It (German Net Salary Estimator) — v1
- * Paste into: src/App.jsx
+ * Paste into: src/App.jsx (or index.tsx as TSX works too)
  * Requires: Tailwind v4 configured
  *
- * UI Lock (Check-It master):
+ * UI Lock (Master Candidate):
  * - bg-neutral-50, text-neutral-800/700
- * - Primary buttons: bg-neutral-700 text-white
- * - Lime accent separators
+ * - Accent: #D5FF00 (same as “It” in the heading)
  * - Normalized Top Actions grid + pinned ? Help
- * - Print preview prints ONLY the preview sheet
- *
- * IMPORTANT:
- * - Estimate only (not payroll-grade)
+ * - Preview modal prints ONLY the preview sheet
+ * - “Save PDF” label (printing happens via browser dialog)
  */
 
 const APP_ID = "nettoit";
@@ -29,6 +26,10 @@ const HUB_URL = "https://YOUR-WIX-HUB-URL-HERE";
 const OFFICIAL_URL =
   "https://www.bundesfinanzministerium.de/Content/DE/Standardartikel/Service/Abgabenrechner/interaktiver-abgabenrechner.html";
 
+// Accent must match the “It” highlight across ALL ToolStack apps.
+const ACCENT = "#D5FF00";
+const ACCENT_RGB = "213 255 0"; // same color as ACCENT, in "r g b" format
+
 // ---------- i18n (EN/DE) ----------
 const I18N = {
   en: {
@@ -37,13 +38,16 @@ const I18N = {
     titleTagline: "German Net Salary Calculator",
     returnHub: "Return to ToolStack hub",
 
+    hub: "Hub",
+    hubMissing: "Hub URL not set yet. Edit HUB_URL in the code.",
+
     preview: "Preview",
-    printSavePdf: "Print / Save PDF",
+    savePdf: "Save PDF",
     export: "Export",
     import: "Import",
     help: "Help",
 
-    printPreviewTitle: "Print preview",
+    printPreviewTitle: "Preview",
     close: "Close",
 
     inputs: "Inputs",
@@ -72,7 +76,7 @@ const I18N = {
     assump4: "Tax class V/VI use simplified multipliers (MVP).",
 
     grossToNet: "Gross → Social + Taxes → Net (estimate)",
-    openPreview: "Open Preview",
+    openPreview: "OPEN PREVIEW",
 
     netEst: "NET (EST.)",
     perMonth: "per month",
@@ -109,8 +113,9 @@ const I18N = {
     exportBody: "Use Export to download a JSON backup file. Save it somewhere safe (Drive/Dropbox/email to yourself).",
     importTitle: "Import (restore)",
     importBody: "Use Import to load a previous JSON backup and continue.",
-    printTitle: "Print / Save PDF",
-    printBody: "Use Preview to open the report sheet, then Print / Save PDF. Printing is scoped to the preview sheet only.",
+    pdfTitle: "Save PDF",
+    pdfBody:
+      "Use Preview to open the report sheet, then Save PDF. This uses your browser’s print dialog (choose ‘Save as PDF’). Printing is scoped to the preview sheet only.",
     limitsTitle: "Estimator limits (important)",
     lim1: "PKV: Only an optional premium you enter is subtracted (no full PKV modeling).",
     lim2: "Tax class V/VI are simplified approximations (not full ELStAM wage-tax tables).",
@@ -156,13 +161,16 @@ const I18N = {
     titleTagline: "Deutscher Netto-Lohnrechner",
     returnHub: "Zur ToolStack-Übersicht",
 
+    hub: "Hub",
+    hubMissing: "Hub-URL ist noch nicht gesetzt. Bitte HUB_URL im Code eintragen.",
+
     preview: "Vorschau",
-    printSavePdf: "Drucken / PDF",
+    savePdf: "PDF speichern",
     export: "Export",
     import: "Import",
     help: "Hilfe",
 
-    printPreviewTitle: "Druckvorschau",
+    printPreviewTitle: "Vorschau",
     close: "Schließen",
 
     inputs: "Eingaben",
@@ -192,12 +200,11 @@ const I18N = {
     assump4: "Steuerklasse V/VI: vereinfachte Multiplikatoren (MVP).",
 
     grossToNet: "Brutto → Sozial + Steuern → Netto (Schätzung)",
-    openPreview: "Vorschau öffnen",
+    openPreview: "VORSCHAU ÖFFNEN",
 
     netEst: "NETTO (SCHÄTZ.)",
     perMonth: "pro Monat",
-    estimateFootnote:
-      "Nur Schätzung — keine Steuer-/Finanzberatung. Ergebnis kann von der Lohnabrechnung abweichen.",
+    estimateFootnote: "Nur Schätzung — keine Steuer-/Finanzberatung. Ergebnis kann von der Lohnabrechnung abweichen.",
 
     taxesMonthly: "Steuern (monatlich)",
     socialMonthly: "Sozial (monatlich)",
@@ -231,9 +238,9 @@ const I18N = {
       "Nutze Export, um eine JSON-Backup-Datei herunterzuladen. Speichere sie sicher (Drive/Dropbox/mail an dich selbst).",
     importTitle: "Import (Wiederherstellen)",
     importBody: "Nutze Import, um ein früheres JSON-Backup zu laden und weiterzumachen.",
-    printTitle: "Drucken / PDF",
-    printBody:
-      "Nutze Vorschau, um das Blatt zu öffnen, dann Drucken / PDF. Gedruckt wird nur die Vorschau-Seite.",
+    pdfTitle: "PDF speichern",
+    pdfBody:
+      "Nutze Vorschau, um das Blatt zu öffnen, dann PDF speichern. Das nutzt den Druckdialog (‚Als PDF speichern‘). Gedruckt wird nur die Vorschau-Seite.",
     limitsTitle: "Grenzen der Schätzung (wichtig)",
     lim1: "PKV: Es wird nur eine optional eingetragene Prämie abgezogen (keine vollständige PKV-Modellierung).",
     lim2: "Steuerklasse V/VI sind vereinfachte Näherungen (keine vollständigen ELStAM-Tabellen).",
@@ -300,6 +307,21 @@ function safeNum(v, fallback = 0) {
   const n = typeof v === "number" ? v : parseFloat(String(v).replace(",", "."));
   return Number.isFinite(n) ? n : fallback;
 }
+
+// UX: when focusing an input, select all text so typing replaces immediately
+const selectAllOnFocus = (e) => {
+  const el = e?.target;
+  if (!el) return;
+  requestAnimationFrame(() => {
+    try {
+      if (typeof el.select === "function") el.select();
+      const len = String(el.value ?? "").length;
+      if (typeof el.setSelectionRange === "function") el.setSelectionRange(0, len);
+    } catch {
+      // ignore
+    }
+  });
+};
 
 function downloadJson(filename, obj) {
   const blob = new Blob([JSON.stringify(obj, null, 2)], { type: "application/json" });
@@ -522,15 +544,19 @@ function estimateNet(data, lang) {
   };
 }
 
-// ---------- UI tokens (Check-It master) ----------
+// ---------- UI tokens (Master) ----------
+// IMPORTANT: these are static Tailwind arbitrary values referencing CSS vars.
+// This avoids fragile dynamic template classes, and works across apps.
 const inputBase =
-  "w-full mt-1 px-3 py-2 rounded-xl border border-neutral-200 bg-white focus:outline-none focus:ring-2 focus:ring-lime-400/25 focus:border-neutral-300";
+  "w-full mt-1 px-3 py-2 rounded-xl border border-neutral-200 bg-white text-neutral-800 " +
+  "focus:outline-none focus:ring-2 focus:ring-[rgb(var(--ts-accent-rgb)/0.25)] focus:border-[var(--ts-accent)]";
 
 const card = "rounded-2xl bg-white border border-neutral-200 shadow-sm";
 const cardPad = "p-4";
 
 const ACTION_BASE =
-  "print:hidden h-10 w-full rounded-xl text-sm font-medium border transition shadow-sm active:translate-y-[1px] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center";
+  "print:hidden h-10 w-full rounded-xl text-sm font-medium border transition shadow-sm " +
+  "active:translate-y-[1px] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center";
 
 function ActionButton({ children, onClick, disabled, title }) {
   return (
@@ -539,7 +565,11 @@ function ActionButton({ children, onClick, disabled, title }) {
       title={title}
       onClick={onClick}
       disabled={disabled}
-      className={`${ACTION_BASE} bg-white hover:bg-neutral-50 text-neutral-700 border-neutral-200`}
+      className={
+        ACTION_BASE +
+        " bg-white text-neutral-800 border-neutral-200 " +
+        "hover:bg-[rgb(var(--ts-accent-rgb)/0.25)] hover:border-[var(--ts-accent)]"
+      }
     >
       {children}
     </button>
@@ -558,28 +588,48 @@ function StatRow({ label, value, hint }) {
   );
 }
 
-function LangButton({ active, onClick, children }) {
+function LanguageToggle({ lang, setLang }) {
+  // Standard ToolStack language toggle (EN/DE) — use across apps
+  const btnBase =
+    "px-3 py-1.5 rounded-lg text-xs font-extrabold tracking-wide transition " +
+    "focus:outline-none focus:ring-2 focus:ring-[rgb(var(--ts-accent-rgb)/0.30)]";
+
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border transition ${
-        active
-          ? "border-lime-200 bg-lime-50 text-neutral-800"
-          : "border-neutral-200 bg-white text-neutral-800 hover:bg-neutral-50"
-      }`}
-    >
-      {children}
-    </button>
+    <div className="inline-flex items-center rounded-xl border border-neutral-200 bg-white p-1 shadow-sm">
+      <button
+        type="button"
+        onClick={() => setLang("en")}
+        className={
+          btnBase +
+          (lang === "en"
+            ? " bg-[var(--ts-accent)] text-neutral-900"
+            : " bg-transparent text-neutral-800 hover:bg-[rgb(var(--ts-accent-rgb)/0.25)]")
+        }
+        aria-pressed={lang === "en"}
+      >
+        EN
+      </button>
+      <button
+        type="button"
+        onClick={() => setLang("de")}
+        className={
+          btnBase +
+          (lang === "de"
+            ? " bg-[var(--ts-accent)] text-neutral-900"
+            : " bg-transparent text-neutral-800 hover:bg-[rgb(var(--ts-accent-rgb)/0.25)]")
+        }
+        aria-pressed={lang === "de"}
+      >
+        DE
+      </button>
+    </div>
   );
 }
 
-// Help Pack v1 (same structure as Check-It) + Netto-It limits
 function HelpModal({ open, onClose, onReset, lang }) {
   if (!open) return null;
   const t = (k) => tFor(lang, k);
 
-  // Mobile fix: keep the dialog top-aligned + internally scrollable so the close button is always reachable.
   return (
     <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-4 sm:p-8">
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
@@ -589,12 +639,11 @@ function HelpModal({ open, onClose, onReset, lang }) {
         aria-modal="true"
         className="relative w-full max-w-2xl max-h-[90vh] rounded-2xl bg-white border border-neutral-200 shadow-xl overflow-hidden flex flex-col"
       >
-        {/* Header (sticky so Close stays visible) */}
         <div className="sticky top-0 z-10 bg-white p-4 border-b border-neutral-100 flex items-start justify-between gap-4">
           <div>
             <div className="text-lg font-semibold text-neutral-800">{t("help")}</div>
             <div className="text-sm text-neutral-700 mt-1">{t("helpSubtitle")}</div>
-            <div className="mt-3 h-[2px] w-52 rounded-full bg-gradient-to-r from-lime-400/0 via-lime-400 to-emerald-400/0" />
+            <div className="mt-3 h-[2px] w-52 rounded-full bg-[var(--ts-accent)]" />
           </div>
           <button
             type="button"
@@ -605,7 +654,6 @@ function HelpModal({ open, onClose, onReset, lang }) {
           </button>
         </div>
 
-        {/* Body (scrolls) */}
         <div className="p-4 space-y-4 text-sm text-neutral-700 overflow-auto min-h-0">
           <div className="rounded-2xl border border-neutral-200 p-4">
             <div className="font-semibold text-neutral-800">{t("autosaveTitle")}</div>
@@ -623,8 +671,8 @@ function HelpModal({ open, onClose, onReset, lang }) {
           </div>
 
           <div className="rounded-2xl border border-neutral-200 p-4">
-            <div className="font-semibold text-neutral-800">{t("printTitle")}</div>
-            <p className="mt-1">{t("printBody")}</p>
+            <div className="font-semibold text-neutral-800">{t("pdfTitle")}</div>
+            <p className="mt-1">{t("pdfBody")}</p>
           </div>
 
           <div className="rounded-2xl border border-neutral-200 p-4">
@@ -641,7 +689,7 @@ function HelpModal({ open, onClose, onReset, lang }) {
             <div className="font-semibold text-neutral-800">{t("officialTitle")}</div>
             <p className="mt-1">{t("officialBody")}</p>
             <a
-              className="mt-2 inline-flex items-center px-3 py-2 rounded-xl text-sm font-medium border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-800 transition"
+              className="mt-2 inline-flex items-center px-3 py-2 rounded-xl text-sm font-medium border border-neutral-200 bg-white text-neutral-800 transition hover:bg-[rgb(var(--ts-accent-rgb)/0.25)] hover:border-[var(--ts-accent)]"
               href={OFFICIAL_URL}
               target="_blank"
               rel="noreferrer"
@@ -657,7 +705,6 @@ function HelpModal({ open, onClose, onReset, lang }) {
           </div>
         </div>
 
-        {/* Footer (always visible) */}
         <div className="p-4 border-t border-neutral-100 flex items-center justify-between gap-2">
           <button
             type="button"
@@ -668,7 +715,7 @@ function HelpModal({ open, onClose, onReset, lang }) {
           </button>
           <button
             type="button"
-            className="px-3 py-2 rounded-xl text-sm font-medium border border-neutral-700 bg-neutral-700 text-white hover:bg-neutral-600 transition"
+            className="px-3 py-2 rounded-xl text-sm font-extrabold border border-[var(--ts-accent)] bg-[var(--ts-accent)] text-neutral-900 transition hover:brightness-95"
             onClick={onClose}
           >
             {t("gotIt")}
@@ -691,10 +738,10 @@ function ReportSheet({ data, breakdown, lang }) {
       <div className="flex items-start justify-between gap-4">
         <div>
           <div className="text-2xl font-bold tracking-tight text-neutral-800">
-            Netto<span className="text-[#D5FF00]">It</span>
+            Netto<span style={{ color: ACCENT }}>It</span>
           </div>
           <div className="text-sm text-neutral-700">{t("reportSubtitle")}</div>
-          <div className="mt-3 h-[2px] w-72 rounded-full bg-gradient-to-r from-lime-400/0 via-lime-400 to-emerald-400/0" />
+          <div className="mt-3 h-[2px] w-72 rounded-full bg-[var(--ts-accent)]" />
         </div>
         <div className="text-sm text-neutral-700">
           {t("generated")} {new Date().toLocaleString(locale)}
@@ -788,9 +835,21 @@ function runNettoItSanityTests() {
     if (!ok) console.error(`[NettoIt test failed] ${name}`);
   };
 
-  const base = { ...defaultData, grossMonthly: 3000, taxClass: "I", churchTax: false, childAllowance: 0, state: "BY", healthType: "public" };
+  const base = {
+    ...defaultData,
+    grossMonthly: 3000,
+    taxClass: "I",
+    churchTax: false,
+    childAllowance: 0,
+    state: "BY",
+    healthType: "public",
+  };
+
   const r1 = estimateNet(base, "en");
-  assert("returns numbers", Number.isFinite(r1.netMonthly) && Number.isFinite(r1.social.total) && Number.isFinite(r1.taxes.totalAnnual));
+  assert(
+    "returns numbers",
+    Number.isFinite(r1.netMonthly) && Number.isFinite(r1.social.total) && Number.isFinite(r1.taxes.totalAnnual)
+  );
 
   const pkv = estimateNet({ ...base, healthType: "private", pkvPremiumMonthly: 200 }, "en");
   assert("pkv premium reduces net", pkv.netMonthly < r1.netMonthly);
@@ -798,6 +857,19 @@ function runNettoItSanityTests() {
 
   const zeroGross = estimateNet({ ...base, grossMonthly: 0 }, "en");
   assert("zero gross net is zero", nearly(zeroGross.netMonthly, 0));
+
+  const withChurch = estimateNet({ ...base, churchTax: true }, "en");
+  assert("church tax increases taxes", withChurch.taxes.totalAnnual > r1.taxes.totalAnnual);
+
+  const withKids = estimateNet({ ...base, childAllowance: 1 }, "en");
+  assert("kids removes childless PV surcharge", withKids.social.pv <= r1.social.pv);
+
+  // Additional tests
+  const tcV = estimateNet({ ...base, taxClass: "V" }, "en");
+  assert("tax class V increases tax vs I", tcV.taxes.totalAnnual >= r1.taxes.totalAnnual);
+
+  const tcIII = estimateNet({ ...base, taxClass: "III" }, "en");
+  assert("tax class III returns finite values", Number.isFinite(tcIII.taxes.totalAnnual) && Number.isFinite(tcIII.netMonthly));
 }
 
 export default function App() {
@@ -831,7 +903,6 @@ export default function App() {
 
   const fileRef = useRef(null);
 
-  // Save language
   useEffect(() => {
     try {
       localStorage.setItem(LANG_KEY, lang);
@@ -840,7 +911,6 @@ export default function App() {
     }
   }, [lang]);
 
-  // Autosave
   useEffect(() => {
     const payload = { meta: { app: APP_ID, version: APP_VERSION, savedAt: new Date().toISOString() }, data };
     localStorage.setItem(KEY, JSON.stringify(payload));
@@ -894,9 +964,22 @@ export default function App() {
 
   const openPreview = () => setPreviewOpen(true);
 
-  const printFromPreview = () => {
+  const savePdfFromPreview = () => {
     setPreviewOpen(true);
     setTimeout(() => window.print(), 60);
+  };
+
+  const openHub = () => {
+    try {
+      const placeholder = "https://YOUR-WIX-HUB-URL-HERE";
+      if (!HUB_URL || HUB_URL === placeholder) {
+        alert(t("hubMissing"));
+        return;
+      }
+      window.open(HUB_URL, "_blank", "noreferrer");
+    } catch {
+      // ignore
+    }
   };
 
   const taxesMonthly = (breakdown.taxes.totalAnnual || 0) / 12;
@@ -913,7 +996,14 @@ export default function App() {
     : "";
 
   return (
-    <div className="min-h-screen bg-neutral-50 text-neutral-800">
+    <div
+      className="min-h-screen bg-neutral-50 text-neutral-800"
+      style={{
+        // CSS vars used by Tailwind arbitrary value classes
+        "--ts-accent": ACCENT,
+        "--ts-accent-rgb": ACCENT_RGB,
+      }}
+    >
       <style>{`
         @media print {
           body { background: white !important; }
@@ -934,10 +1024,10 @@ export default function App() {
               <div className="flex items-center gap-2">
                 <button
                   type="button"
-                  className="px-3 py-2 rounded-xl text-sm font-medium border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-800 transition"
+                  className="px-3 py-2 rounded-xl text-sm font-extrabold border border-[var(--ts-accent)] bg-[var(--ts-accent)] text-neutral-900 transition hover:brightness-95"
                   onClick={() => window.print()}
                 >
-                  {t("printSavePdf")}
+                  {t("savePdf")}
                 </button>
                 <button
                   type="button"
@@ -962,41 +1052,28 @@ export default function App() {
         {/* Header */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <div className="text-4xl sm:text-5xl font-black tracking-tight text-neutral-700">
+            <div className="text-4xl sm:text-5xl font-black tracking-tight text-neutral-800">
               <span>Netto</span>
-              <span className="text-[#D5FF00]">It</span>
+              <span style={{ color: ACCENT }}>It</span>
             </div>
             <div className="text-sm text-neutral-700">{t("titleTagline")}</div>
-            <div className="mt-3 h-[2px] w-80 rounded-full bg-gradient-to-r from-lime-400/0 via-lime-400 to-emerald-400/0" />
+            <div className="mt-3 h-[2px] w-80 rounded-full bg-[var(--ts-accent)]" />
 
             <div className="mt-3 flex items-center gap-2">
               <span className="text-xs text-neutral-600">{t("language")}</span>
-              <LangButton active={lang === "en"} onClick={() => setLang("en")}>
-                EN
-              </LangButton>
-              <LangButton active={lang === "de"} onClick={() => setLang("de")}>
-                DE
-              </LangButton>
+              <LanguageToggle lang={lang} setLang={setLang} />
             </div>
-
-            {HUB_URL && HUB_URL !== "https://YOUR-WIX-HUB-URL-HERE" ? (
-              <a
-                className="mt-3 inline-block text-sm font-semibold text-neutral-800 underline"
-                href={HUB_URL}
-                target="_blank"
-                rel="noreferrer"
-              >
-                {t("returnHub")}
-              </a>
-            ) : null}
           </div>
 
           {/* Normalized top actions grid (with pinned help) */}
-          <div className="w-full sm:w-[680px]">
+          <div className="w-full sm:w-[820px]">
             <div className="relative">
-              <div className="grid grid-cols-2 gap-2 sm:grid-cols-5 pr-12">
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-6 pr-12">
+                <ActionButton onClick={openHub} title={t("returnHub")}>
+                  {t("hub")}
+                </ActionButton>
                 <ActionButton onClick={openPreview}>{t("preview")}</ActionButton>
-                <ActionButton onClick={printFromPreview}>{t("printSavePdf")}</ActionButton>
+                <ActionButton onClick={savePdfFromPreview}>{t("savePdf")}</ActionButton>
                 <ActionButton onClick={onExport}>{t("export")}</ActionButton>
                 <ActionButton onClick={onImportPick}>{t("import")}</ActionButton>
                 <ActionButton onClick={() => setHelpOpen(true)}>{t("help")}</ActionButton>
@@ -1006,7 +1083,11 @@ export default function App() {
                 type="button"
                 title={t("help")}
                 onClick={() => setHelpOpen(true)}
-                className="print:hidden absolute right-0 top-0 h-10 w-10 rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 shadow-sm flex items-center justify-center font-bold text-neutral-800"
+                className={
+                  "print:hidden absolute right-0 top-0 h-10 w-10 rounded-xl border border-neutral-200 bg-white shadow-sm " +
+                  "flex items-center justify-center font-bold text-neutral-800 transition " +
+                  "hover:bg-[rgb(var(--ts-accent-rgb)/0.25)] hover:border-[var(--ts-accent)]"
+                }
                 aria-label={t("help")}
               >
                 ?
@@ -1043,6 +1124,7 @@ export default function App() {
                   <input
                     className={inputBase}
                     value={data.grossMonthly}
+                    onFocus={selectAllOnFocus}
                     onChange={(e) => setData((d) => ({ ...d, grossMonthly: safeNum(e.target.value, 0) }))}
                     type="number"
                     min={0}
@@ -1072,7 +1154,7 @@ export default function App() {
                       type="checkbox"
                       checked={!!data.churchTax}
                       onChange={(e) => setData((d) => ({ ...d, churchTax: e.target.checked }))}
-                      className="h-4 w-4 accent-lime-500"
+                      className="h-4 w-4 accent-[var(--ts-accent)]"
                     />
                     <span className="text-sm font-medium text-neutral-800">{t("yes")}</span>
                   </div>
@@ -1083,6 +1165,7 @@ export default function App() {
                   <input
                     className={inputBase}
                     value={data.childAllowance}
+                    onFocus={selectAllOnFocus}
                     onChange={(e) => setData((d) => ({ ...d, childAllowance: safeNum(e.target.value, 0) }))}
                     type="number"
                     min={0}
@@ -1123,6 +1206,7 @@ export default function App() {
                     <input
                       className={inputBase}
                       value={data.pkvPremiumMonthly ?? 0}
+                      onFocus={selectAllOnFocus}
                       onChange={(e) => setData((d) => ({ ...d, pkvPremiumMonthly: safeNum(e.target.value, 0) }))}
                       type="number"
                       min={0}
@@ -1158,7 +1242,7 @@ export default function App() {
                 </div>
                 <button
                   type="button"
-                  className="px-3 py-2 rounded-xl text-sm font-medium border border-neutral-700 bg-neutral-700 text-white shadow-sm hover:bg-neutral-600 active:translate-y-[1px] transition"
+                  className="px-3 py-2 rounded-xl text-sm font-extrabold border border-[var(--ts-accent)] bg-[var(--ts-accent)] text-neutral-900 shadow-sm transition hover:brightness-95 active:translate-y-[1px]"
                   onClick={openPreview}
                 >
                   {t("openPreview")}
