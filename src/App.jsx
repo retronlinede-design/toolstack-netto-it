@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import nettoitHeading from "./assets/nettoit-heading.png";
 
 /**
  * ToolStack — Netto-It (German Net Salary Estimator) — v1
@@ -153,6 +154,7 @@ const I18N = {
       "Private health selected: statutory KV/PV shown as 0. If you enter a PKV premium, it is subtracted from net.",
     noteChildless: "Includes childless care surcharge (0.6%) if 23+.",
     noteWithKids: "Care surcharge not applied (children allowance > 0).",
+    actionsSubtitle: "Manage your data and results.",
   },
 
   de: {
@@ -278,6 +280,7 @@ const I18N = {
       "Private KV gewählt: gesetzliche KV/PV wird hier als 0 gezeigt. Eine eingetragene PKV-Prämie wird vom Netto abgezogen.",
     noteChildless: "PV-Zuschlag für Kinderlose (0,6%) enthalten, wenn 23+.",
     noteWithKids: "Kein Kinderlosen-Zuschlag (Kinderfreibetrag > 0).",
+    actionsSubtitle: "Daten verwalten und Ergebnisse.",
   },
 };
 
@@ -568,7 +571,7 @@ function ActionButton({ children, onClick, disabled, title }) {
       className={
         ACTION_BASE +
         " bg-white text-neutral-800 border-neutral-200 " +
-        "hover:bg-[rgb(var(--ts-accent-rgb)/0.25)] hover:border-[var(--ts-accent)]"
+        "hover:bg-[rgb(var(--ts-accent-rgb)/0.30)] hover:border-[var(--ts-accent)]"
       }
     >
       {children}
@@ -589,39 +592,40 @@ function StatRow({ label, value, hint }) {
 }
 
 function LanguageToggle({ lang, setLang }) {
-  // Standard ToolStack language toggle (EN/DE) — use across apps
-  const btnBase =
-    "px-3 py-1.5 rounded-lg text-xs font-extrabold tracking-wide transition " +
-    "focus:outline-none focus:ring-2 focus:ring-[rgb(var(--ts-accent-rgb)/0.30)]";
-
   return (
-    <div className="inline-flex items-center rounded-xl border border-neutral-200 bg-white p-1 shadow-sm">
-      <button
-        type="button"
-        onClick={() => setLang("en")}
-        className={
-          btnBase +
-          (lang === "en"
-            ? " bg-[var(--ts-accent)] text-neutral-900"
-            : " bg-transparent text-neutral-800 hover:bg-[rgb(var(--ts-accent-rgb)/0.25)]")
-        }
-        aria-pressed={lang === "en"}
-      >
-        EN
-      </button>
-      <button
-        type="button"
-        onClick={() => setLang("de")}
-        className={
-          btnBase +
-          (lang === "de"
-            ? " bg-[var(--ts-accent)] text-neutral-900"
-            : " bg-transparent text-neutral-800 hover:bg-[rgb(var(--ts-accent-rgb)/0.25)]")
-        }
-        aria-pressed={lang === "de"}
-      >
-        DE
-      </button>
+    <div className="flex items-center gap-1 p-1 bg-neutral-100 rounded-full border border-neutral-200/50">
+      {["en", "de"].map((code) => {
+        const isActive = lang === code;
+        return (
+          <button
+            key={code}
+            type="button"
+            onClick={() => setLang(code)}
+            className={
+              "relative px-4 py-1.5 rounded-full text-xs font-bold transition-all duration-200 " +
+              (isActive
+                ? "bg-[var(--ts-accent)] text-neutral-900 shadow-sm scale-105"
+                : "text-neutral-500 hover:text-neutral-900 hover:bg-white/60")
+            }
+          >
+            {code.toUpperCase()}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function HelpItem({ icon, title, body }) {
+  return (
+    <div className="rounded-2xl border border-neutral-100 bg-neutral-50/50 p-5 hover:border-neutral-200 transition-colors">
+      <div className="flex items-center gap-3 mb-2">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-xl shadow-sm border border-neutral-100">
+          {icon}
+        </div>
+        <div className="font-bold text-neutral-800 text-sm">{title}</div>
+      </div>
+      <div className="text-xs text-neutral-500 leading-relaxed">{body}</div>
     </div>
   );
 }
@@ -631,53 +635,50 @@ function HelpModal({ open, onClose, onReset, lang }) {
   const t = (k) => tFor(lang, k);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-4 sm:p-8">
-      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 print:hidden">
+      <div className="absolute inset-0 bg-neutral-900/40 backdrop-blur-sm transition-opacity" onClick={onClose} />
 
       <div
         role="dialog"
         aria-modal="true"
-        className="relative w-full max-w-2xl max-h-[90vh] rounded-2xl bg-white border border-neutral-200 shadow-xl overflow-hidden flex flex-col"
+        className="relative w-full max-w-3xl max-h-[90vh] rounded-3xl bg-white shadow-2xl overflow-hidden flex flex-col transform transition-all"
       >
-        <div className="sticky top-0 z-10 bg-white p-4 border-b border-neutral-100 flex items-start justify-between gap-4">
+        {/* Header */}
+        <div className="shrink-0 p-6 border-b border-neutral-100 flex items-center justify-between bg-white z-10">
           <div>
-            <div className="text-lg font-semibold text-neutral-800">{t("help")}</div>
+            <div className="text-2xl font-black tracking-tight text-neutral-800">
+              {t("help")} <span style={{ color: "var(--ts-accent)" }}>& Info</span>
+            </div>
             <div className="text-sm text-neutral-700 mt-1">{t("helpSubtitle")}</div>
-            <div className="mt-3 h-[2px] w-52 rounded-full bg-[var(--ts-accent)]" />
           </div>
           <button
             type="button"
-            className="shrink-0 px-3 py-2 rounded-xl text-sm font-medium border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-800 transition"
             onClick={onClose}
+            className="rounded-full p-2 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 transition"
           >
-            {t("close")}
+            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
           </button>
         </div>
 
-        <div className="p-4 space-y-4 text-sm text-neutral-700 overflow-auto min-h-0">
-          <div className="rounded-2xl border border-neutral-200 p-4">
-            <div className="font-semibold text-neutral-800">{t("autosaveTitle")}</div>
-            <p className="mt-1">{t("autosaveBody")}</p>
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto p-6 space-y-6">
+          {/* Feature Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <HelpItem icon="💾" title={t("autosaveTitle")} body={t("autosaveBody")} />
+            <HelpItem icon="📤" title={t("exportTitle")} body={t("exportBody")} />
+            <HelpItem icon="📥" title={t("importTitle")} body={t("importBody")} />
+            <HelpItem icon="📄" title={t("pdfTitle")} body={t("pdfBody")} />
           </div>
 
-          <div className="rounded-2xl border border-neutral-200 p-4">
-            <div className="font-semibold text-neutral-800">{t("exportTitle")}</div>
-            <p className="mt-1">{t("exportBody")}</p>
-          </div>
-
-          <div className="rounded-2xl border border-neutral-200 p-4">
-            <div className="font-semibold text-neutral-800">{t("importTitle")}</div>
-            <p className="mt-1">{t("importBody")}</p>
-          </div>
-
-          <div className="rounded-2xl border border-neutral-200 p-4">
-            <div className="font-semibold text-neutral-800">{t("pdfTitle")}</div>
-            <p className="mt-1">{t("pdfBody")}</p>
-          </div>
-
-          <div className="rounded-2xl border border-neutral-200 p-4">
-            <div className="font-semibold text-neutral-800">{t("limitsTitle")}</div>
-            <ul className="mt-2 list-disc pl-5">
+          {/* Limits (Warning style) */}
+          <div className="rounded-2xl border border-amber-100 bg-amber-50/50 p-5">
+            <div className="flex items-center gap-2 mb-3 text-amber-900 font-bold">
+              <span className="text-xl">⚠️</span>
+              <span>{t("limitsTitle")}</span>
+            </div>
+            <ul className="space-y-2 text-sm text-amber-800/80 list-disc pl-5 marker:text-amber-400">
               <li>{t("lim1")}</li>
               <li>{t("lim2")}</li>
               <li>{t("lim3")}</li>
@@ -685,41 +686,99 @@ function HelpModal({ open, onClose, onReset, lang }) {
             </ul>
           </div>
 
-          <div className="rounded-2xl border border-neutral-200 p-4">
-            <div className="font-semibold text-neutral-800">{t("officialTitle")}</div>
-            <p className="mt-1">{t("officialBody")}</p>
-            <a
-              className="mt-2 inline-flex items-center px-3 py-2 rounded-xl text-sm font-medium border border-neutral-200 bg-white text-neutral-800 transition hover:bg-[rgb(var(--ts-accent-rgb)/0.25)] hover:border-[var(--ts-accent)]"
-              href={OFFICIAL_URL}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {t("officialOpen")}
-            </a>
+          {/* Official Calculator (Dark card) */}
+          <div className="rounded-2xl bg-neutral-900 p-6 text-white relative overflow-hidden group">
+            <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-[var(--ts-accent)] rounded-full opacity-20 blur-2xl group-hover:opacity-30 transition duration-500"></div>
+
+            <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div>
+                <div className="font-bold text-lg text-white">{t("officialTitle")}</div>
+                <div className="text-neutral-400 text-sm mt-1 max-w-md">{t("officialBody")}</div>
+              </div>
+              <a
+                href={OFFICIAL_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="shrink-0 inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--ts-accent)] text-neutral-800 font-bold text-sm hover:brightness-110 transition shadow-lg shadow-[rgba(var(--ts-accent-rgb),0.2)]"
+              >
+                {t("officialOpen")}
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                </svg>
+              </a>
+            </div>
           </div>
 
-          <div className="text-xs text-neutral-600">{t("tip")}</div>
-
-          <div className="text-xs text-neutral-600">
-            {t("storageKey")} <span className="font-mono">{KEY}</span> • {t("reservedProfileKey")} <span className="font-mono">{PROFILE_KEY}</span>
+          {/* Footer / Meta */}
+          <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-neutral-400 border-t border-neutral-100 mt-4">
+            <div>
+              {t("storageKey")} <span className="font-mono text-neutral-500">{KEY}</span>
+            </div>
+            <button
+              type="button"
+              onClick={onReset}
+              className="text-red-400 hover:text-red-600 font-medium transition underline decoration-red-200 underline-offset-2"
+            >
+              {t("resetAppData")}
+            </button>
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
 
-        <div className="p-4 border-t border-neutral-100 flex items-center justify-between gap-2">
+function MenuButton({ icon, label, sub, onClick }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="group relative flex flex-col items-center justify-center rounded-2xl border-2 border-neutral-100 bg-white p-6 text-center transition-all hover:border-[var(--ts-accent)] hover:bg-[rgb(var(--ts-accent-rgb)/0.05)] active:scale-[0.98]"
+    >
+      <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-neutral-100 text-2xl transition-colors group-hover:bg-[var(--ts-accent)] group-hover:text-neutral-800">
+        {icon}
+      </div>
+      <div className="font-bold text-neutral-800">{label}</div>
+      <div className="mt-1 text-xs font-medium text-neutral-500">{sub}</div>
+    </button>
+  );
+}
+
+function ExportMenu({ open, onClose, actions, lang }) {
+  if (!open) return null;
+  const t = (k) => tFor(lang, k);
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-8 print:hidden">
+      <div className="absolute inset-0 bg-neutral-900/40 backdrop-blur-sm transition-opacity" onClick={onClose} />
+      <div className="relative w-full max-w-lg transform overflow-hidden rounded-3xl bg-white shadow-2xl transition-all">
+        <div className="bg-neutral-50/50 p-6 border-b border-neutral-100 flex items-center justify-between">
+          <div>
+            <div className="text-xl font-black tracking-tight text-neutral-800">
+              {t("export")} <span style={{ color: "var(--ts-accent)" }}>& Actions</span>
+            </div>
+            <div className="text-sm text-neutral-500 mt-1">{t("actionsSubtitle")}</div>
+          </div>
           <button
             type="button"
-            className="px-3 py-2 rounded-xl text-sm font-medium border border-red-200 bg-red-50 hover:bg-red-100 text-red-700 transition"
-            onClick={onReset}
-          >
-            {t("resetAppData")}
-          </button>
-          <button
-            type="button"
-            className="px-3 py-2 rounded-xl text-sm font-extrabold border border-[var(--ts-accent)] bg-[var(--ts-accent)] text-neutral-900 transition hover:brightness-95"
             onClick={onClose}
+            className="rounded-full p-2 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 transition"
           >
-            {t("gotIt")}
+            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
           </button>
+        </div>
+
+        <div className="p-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <MenuButton icon="👁️" label={t("preview")} sub="View report" onClick={() => { actions.preview(); onClose(); }} />
+          <MenuButton icon="📄" label={t("savePdf")} sub="Print / PDF" onClick={() => { actions.pdf(); onClose(); }} />
+          <MenuButton icon="↓" label={t("export")} sub="Backup JSON" onClick={() => { actions.export(); onClose(); }} />
+          <MenuButton icon="↑" label={t("import")} sub="Restore JSON" onClick={() => { actions.import(); onClose(); }} />
+        </div>
+
+        <div className="bg-neutral-50 p-4 text-center text-xs text-neutral-400 font-medium">
+          ToolStack Netto-It
         </div>
       </div>
     </div>
@@ -741,7 +800,7 @@ function ReportSheet({ data, breakdown, lang }) {
             Netto<span style={{ color: ACCENT }}>It</span>
           </div>
           <div className="text-sm text-neutral-700">{t("reportSubtitle")}</div>
-          <div className="mt-3 h-[2px] w-72 rounded-full bg-[var(--ts-accent)]" />
+          <div className="mt-3 h-[2px] w-full rounded-full bg-[var(--ts-accent)]" />
         </div>
         <div className="text-sm text-neutral-700">
           {t("generated")} {new Date().toLocaleString(locale)}
@@ -899,6 +958,7 @@ export default function App() {
 
   const [previewOpen, setPreviewOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
+  const [exportMenuOpen, setExportMenuOpen] = useState(false);
   const [importing, setImporting] = useState(false);
 
   const fileRef = useRef(null);
@@ -1013,6 +1073,18 @@ export default function App() {
       `}</style>
 
       <HelpModal open={helpOpen} onClose={() => setHelpOpen(false)} onReset={resetAppData} lang={lang} />
+      
+      <ExportMenu 
+        open={exportMenuOpen} 
+        onClose={() => setExportMenuOpen(false)} 
+        lang={lang}
+        actions={{
+          preview: openPreview,
+          pdf: savePdfFromPreview,
+          export: onExport,
+          import: onImportPick
+        }}
+      />
 
       {/* Preview Modal */}
       {previewOpen ? (
@@ -1024,7 +1096,7 @@ export default function App() {
               <div className="flex items-center gap-2">
                 <button
                   type="button"
-                  className="px-3 py-2 rounded-xl text-sm font-extrabold border border-[var(--ts-accent)] bg-[var(--ts-accent)] text-neutral-900 transition hover:brightness-95"
+                  className="px-3 py-2 rounded-xl text-sm font-extrabold border border-[var(--ts-accent)] bg-[var(--ts-accent)] text-neutral-800 transition hover:brightness-95"
                   onClick={() => window.print()}
                 >
                   {t("savePdf")}
@@ -1051,32 +1123,23 @@ export default function App() {
       <div className="max-w-6xl mx-auto p-4 sm:p-6">
         {/* Header */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <div className="text-4xl sm:text-5xl font-black tracking-tight text-neutral-800">
-              <span>Netto</span>
-              <span style={{ color: ACCENT }}>It</span>
-            </div>
-            <div className="text-sm text-neutral-700">{t("titleTagline")}</div>
-            <div className="mt-3 h-[2px] w-80 rounded-full bg-[var(--ts-accent)]" />
-
-            <div className="mt-3 flex items-center gap-2">
-              <span className="text-xs text-neutral-600">{t("language")}</span>
-              <LanguageToggle lang={lang} setLang={setLang} />
-            </div>
+          <div className="w-fit">
+            <img
+              src={nettoitHeading}
+              alt="NettoIt"
+              className="h-24 sm:h-40 w-auto object-contain max-w-full"
+            />
           </div>
 
           {/* Normalized top actions grid (with pinned help) */}
-          <div className="w-full sm:w-[820px]">
+          <div className="w-full sm:w-[26rem]">
             <div className="relative">
-              <div className="grid grid-cols-2 gap-2 sm:grid-cols-6 pr-12">
+              <div className="grid grid-cols-3 gap-2 pr-12">
                 <ActionButton onClick={openHub} title={t("returnHub")}>
                   {t("hub")}
                 </ActionButton>
                 <ActionButton onClick={openPreview}>{t("preview")}</ActionButton>
-                <ActionButton onClick={savePdfFromPreview}>{t("savePdf")}</ActionButton>
-                <ActionButton onClick={onExport}>{t("export")}</ActionButton>
-                <ActionButton onClick={onImportPick}>{t("import")}</ActionButton>
-                <ActionButton onClick={() => setHelpOpen(true)}>{t("help")}</ActionButton>
+                <ActionButton onClick={() => setExportMenuOpen(true)}>{t("export")}</ActionButton>
               </div>
 
               <button
@@ -1086,12 +1149,16 @@ export default function App() {
                 className={
                   "print:hidden absolute right-0 top-0 h-10 w-10 rounded-xl border border-neutral-200 bg-white shadow-sm " +
                   "flex items-center justify-center font-bold text-neutral-800 transition " +
-                  "hover:bg-[rgb(var(--ts-accent-rgb)/0.25)] hover:border-[var(--ts-accent)]"
+                  "hover:bg-[rgb(var(--ts-accent-rgb)/0.30)] hover:border-[var(--ts-accent)]"
                 }
                 aria-label={t("help")}
               >
                 ?
               </button>
+            </div>
+
+            <div className="mt-3 flex items-center justify-end gap-2">
+              <LanguageToggle lang={lang} setLang={setLang} />
             </div>
           </div>
         </div>
@@ -1242,7 +1309,7 @@ export default function App() {
                 </div>
                 <button
                   type="button"
-                  className="px-3 py-2 rounded-xl text-sm font-extrabold border border-[var(--ts-accent)] bg-[var(--ts-accent)] text-neutral-900 shadow-sm transition hover:brightness-95 active:translate-y-[1px]"
+                  className="px-3 py-2 rounded-xl text-sm font-extrabold border border-[var(--ts-accent)] bg-[var(--ts-accent)] text-neutral-800 shadow-sm transition hover:brightness-95 active:translate-y-[1px]"
                   onClick={openPreview}
                 >
                   {t("openPreview")}
