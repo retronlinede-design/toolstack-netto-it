@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import nettoitHeading from "./assets/nettoit-heading.png";
+import calcImg from "./assets/calc.png";
 
 /**
  * ToolStack — Netto-It (German Net Salary Estimator) — v1
@@ -1123,12 +1124,13 @@ export default function App() {
       <div className="max-w-6xl mx-auto p-4 sm:p-6">
         {/* Header */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-          <div className="w-fit">
+          <div className="flex items-center gap-6">
             <img
               src={nettoitHeading}
               alt="NettoIt"
               className="h-24 sm:h-40 w-auto object-contain max-w-full"
             />
+            <img src={calcImg} alt="" className="w-48 sm:w-72 -rotate-12 pointer-events-none" />
           </div>
 
           {/* Normalized top actions grid (with pinned help) */}
