@@ -1,6 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import nettoitHeading from "./assets/nettoit-heading.png";
 import calcImg from "./assets/calc.png";
+import hubTag from "./assets/hub_tag.png";
+import previewTag from "./assets/preview_tag.png";
+import exportTag from "./assets/export_tag.png";
 
 /**
  * ToolStack — Netto-It (German Net Salary Estimator) — v1
@@ -558,27 +561,8 @@ const inputBase =
 const card = "rounded-2xl bg-white border border-neutral-200 shadow-sm";
 const cardPad = "p-4";
 
-const ACTION_BASE =
-  "print:hidden h-10 w-full rounded-xl text-sm font-medium border transition shadow-sm " +
-  "active:translate-y-[1px] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center";
-
-function ActionButton({ children, onClick, disabled, title }) {
-  return (
-    <button
-      type="button"
-      title={title}
-      onClick={onClick}
-      disabled={disabled}
-      className={
-        ACTION_BASE +
-        " bg-white text-neutral-800 border-neutral-200 " +
-        "hover:bg-[rgb(var(--ts-accent-rgb)/0.30)] hover:border-[var(--ts-accent)]"
-      }
-    >
-      {children}
-    </button>
-  );
-}
+const TAG_BUTTON_BASE =
+  "print:hidden text-2xl font-graffiti transition-transform duration-200 ease-in-out hover:scale-110 active:scale-100 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center";
 
 function StatRow({ label, value, hint }) {
   return (
@@ -619,14 +603,14 @@ function LanguageToggle({ lang, setLang }) {
 
 function HelpItem({ icon, title, body }) {
   return (
-    <div className="rounded-2xl border border-neutral-100 bg-neutral-50/50 p-5 hover:border-neutral-200 transition-colors">
-      <div className="flex items-center gap-3 mb-2">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-xl shadow-sm border border-neutral-100">
+    <div className="border-l-4 border-[var(--ts-accent)] bg-neutral-700/50 p-5 transition-colors hover:bg-neutral-700">
+      <div className="flex items-center gap-4 mb-2">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center bg-neutral-800 text-2xl shadow-md transform -rotate-6">
           {icon}
         </div>
-        <div className="font-bold text-neutral-800 text-sm">{title}</div>
+        <div className="font-bold text-white text-base">{title}</div>
       </div>
-      <div className="text-xs text-neutral-500 leading-relaxed">{body}</div>
+      <div className="text-sm text-neutral-400 leading-relaxed pl-1">{body}</div>
     </div>
   );
 }
@@ -637,34 +621,38 @@ function HelpModal({ open, onClose, onReset, lang }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 print:hidden">
-      <div className="absolute inset-0 bg-neutral-900/40 backdrop-blur-sm transition-opacity" onClick={onClose} />
+      <div className="absolute inset-0 bg-neutral-900/60 backdrop-blur-sm transition-opacity" onClick={onClose} />
 
       <div
         role="dialog"
         aria-modal="true"
-        className="relative w-full max-w-3xl max-h-[90vh] rounded-3xl bg-white shadow-2xl overflow-hidden flex flex-col transform transition-all"
+        className="relative w-full max-w-3xl max-h-[90vh] rounded-2xl bg-neutral-800 border-2 border-neutral-700 shadow-2xl overflow-hidden flex flex-col transform transition-all"
       >
         {/* Header */}
-        <div className="shrink-0 p-6 border-b border-neutral-100 flex items-center justify-between bg-white z-10">
-          <div>
-            <div className="text-2xl font-black tracking-tight text-neutral-800">
-              {t("help")} <span style={{ color: "var(--ts-accent)" }}>& Info</span>
+        <div className="shrink-0 p-6 flex items-start justify-between z-10">
+          <div className="transform -rotate-3">
+            <div
+              className="font-graffiti text-5xl tracking-tight"
+              style={{
+                color: "var(--ts-accent)",
+                textShadow: "-2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000",
+              }}
+            >
+              {t("help")} & Info
             </div>
-            <div className="text-sm text-neutral-700 mt-1">{t("helpSubtitle")}</div>
+            <div className="text-sm text-neutral-400 mt-2 ml-1">{t("helpSubtitle")}</div>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full p-2 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 transition"
+            className="rounded-lg p-2 text-neutral-400 hover:bg-neutral-700 hover:text-white transition font-black text-2xl"
           >
-            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
+            &times;
           </button>
         </div>
 
         {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6">
+        <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-neutral-800/50">
           {/* Feature Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <HelpItem icon="💾" title={t("autosaveTitle")} body={t("autosaveBody")} />
@@ -674,12 +662,12 @@ function HelpModal({ open, onClose, onReset, lang }) {
           </div>
 
           {/* Limits (Warning style) */}
-          <div className="rounded-2xl border border-amber-100 bg-amber-50/50 p-5">
-            <div className="flex items-center gap-2 mb-3 text-amber-900 font-bold">
-              <span className="text-xl">⚠️</span>
-              <span>{t("limitsTitle")}</span>
+          <div className="rounded-lg border border-red-500/30 bg-red-900/20 p-5">
+            <div className="flex items-center gap-3 mb-3 text-red-400 font-bold">
+              <span className="text-2xl">⚠️</span>
+              <span className="text-lg">{t("limitsTitle")}</span>
             </div>
-            <ul className="space-y-2 text-sm text-amber-800/80 list-disc pl-5 marker:text-amber-400">
+            <ul className="space-y-2 text-sm text-red-300/80 list-disc pl-5 marker:text-red-500">
               <li>{t("lim1")}</li>
               <li>{t("lim2")}</li>
               <li>{t("lim3")}</li>
@@ -688,7 +676,7 @@ function HelpModal({ open, onClose, onReset, lang }) {
           </div>
 
           {/* Official Calculator (Dark card) */}
-          <div className="rounded-2xl bg-neutral-900 p-6 text-white relative overflow-hidden group">
+          <div className="rounded-xl bg-neutral-900 p-6 text-white relative overflow-hidden group">
             <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-[var(--ts-accent)] rounded-full opacity-20 blur-2xl group-hover:opacity-30 transition duration-500"></div>
 
             <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -711,14 +699,14 @@ function HelpModal({ open, onClose, onReset, lang }) {
           </div>
 
           {/* Footer / Meta */}
-          <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-neutral-400 border-t border-neutral-100 mt-4">
+          <div className="pt-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-neutral-500 border-t border-neutral-700 mt-4">
             <div>
-              {t("storageKey")} <span className="font-mono text-neutral-500">{KEY}</span>
+              {t("storageKey")} <span className="font-mono text-neutral-400">{KEY}</span>
             </div>
             <button
               type="button"
               onClick={onReset}
-              className="text-red-400 hover:text-red-600 font-medium transition underline decoration-red-200 underline-offset-2"
+              className="text-red-500 hover:text-red-400 font-medium transition underline decoration-red-500/50 underline-offset-2"
             >
               {t("resetAppData")}
             </button>
@@ -734,13 +722,16 @@ function MenuButton({ icon, label, sub, onClick }) {
     <button
       type="button"
       onClick={onClick}
-      className="group relative flex flex-col items-center justify-center rounded-2xl border-2 border-neutral-100 bg-white p-6 text-center transition-all hover:border-[var(--ts-accent)] hover:bg-[rgb(var(--ts-accent-rgb)/0.05)] active:scale-[0.98]"
+      className="group relative flex flex-col items-center justify-center rounded-xl border-2 border-neutral-700 bg-neutral-800 p-6 text-center transition-all hover:border-[var(--ts-accent)] hover:bg-neutral-700/50 active:scale-[0.98]"
     >
-      <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-neutral-100 text-2xl transition-colors group-hover:bg-[var(--ts-accent)] group-hover:text-neutral-800">
+      <div
+        className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-neutral-900 text-3xl transition-transform duration-200 group-hover:-rotate-12 group-hover:scale-110 shadow-[inset_2px_2px_5px_rgba(0,0,0,0.5),inset_-2px_-2px_5px_rgba(255,255,255,0.05)]"
+        style={{ textShadow: "1px 1px 2px rgba(0,0,0,0.7)" }}
+      >
         {icon}
       </div>
-      <div className="font-bold text-neutral-800">{label}</div>
-      <div className="mt-1 text-xs font-medium text-neutral-500">{sub}</div>
+      <div className="font-graffiti text-xl text-white transition-colors group-hover:text-[var(--ts-accent)]">{label}</div>
+      <div className="mt-1 text-xs font-medium text-neutral-400">{sub}</div>
     </button>
   );
 }
@@ -751,34 +742,38 @@ function ExportMenu({ open, onClose, actions, lang }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-8 print:hidden">
-      <div className="absolute inset-0 bg-neutral-900/40 backdrop-blur-sm transition-opacity" onClick={onClose} />
-      <div className="relative w-full max-w-lg transform overflow-hidden rounded-3xl bg-white shadow-2xl transition-all">
-        <div className="bg-neutral-50/50 p-6 border-b border-neutral-100 flex items-center justify-between">
-          <div>
-            <div className="text-xl font-black tracking-tight text-neutral-800">
-              {t("export")} <span style={{ color: "var(--ts-accent)" }}>& Actions</span>
+      <div className="absolute inset-0 bg-neutral-900/60 backdrop-blur-sm transition-opacity" onClick={onClose} />
+      <div className="relative w-full max-w-lg transform overflow-hidden rounded-2xl bg-neutral-800 border-2 border-neutral-700 shadow-2xl transition-all">
+        <div className="p-6 flex items-start justify-between">
+          <div className="transform -rotate-2">
+            <div
+              className="font-graffiti text-4xl tracking-tight"
+              style={{
+                color: "#E0E0E0",
+                textShadow: "0 0 4px black, 0 0 8px var(--ts-accent), 0 0 12px var(--ts-accent)",
+              }}
+            >
+              {t("export")} & Actions
             </div>
-            <div className="text-sm text-neutral-500 mt-1">{t("actionsSubtitle")}</div>
+            <div className="text-sm text-neutral-400 mt-2 ml-1">{t("actionsSubtitle")}</div>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full p-2 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 transition"
+            className="rounded-lg p-2 text-neutral-400 hover:bg-neutral-700 hover:text-white transition font-black text-2xl"
           >
-            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
+            &times;
           </button>
         </div>
 
-        <div className="p-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="p-6 pt-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
           <MenuButton icon="👁️" label={t("preview")} sub="View report" onClick={() => { actions.preview(); onClose(); }} />
           <MenuButton icon="📄" label={t("savePdf")} sub="Print / PDF" onClick={() => { actions.pdf(); onClose(); }} />
           <MenuButton icon="↓" label={t("export")} sub="Backup JSON" onClick={() => { actions.export(); onClose(); }} />
           <MenuButton icon="↑" label={t("import")} sub="Restore JSON" onClick={() => { actions.import(); onClose(); }} />
         </div>
 
-        <div className="bg-neutral-50 p-4 text-center text-xs text-neutral-400 font-medium">
+        <div className="bg-neutral-900/50 p-3 text-center text-xs text-neutral-500 font-medium">
           ToolStack Netto-It
         </div>
       </div>
@@ -1134,32 +1129,47 @@ export default function App() {
           </div>
 
           {/* Normalized top actions grid (with pinned help) */}
-          <div className="w-full sm:w-[26rem]">
-            <div className="relative">
-              <div className="grid grid-cols-3 gap-2 pr-12">
-                <ActionButton onClick={openHub} title={t("returnHub")}>
-                  {t("hub")}
-                </ActionButton>
-                <ActionButton onClick={openPreview}>{t("preview")}</ActionButton>
-                <ActionButton onClick={() => setExportMenuOpen(true)}>{t("export")}</ActionButton>
-              </div>
-
+          <div className="flex flex-col items-end">
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                aria-label="Go to Hub"
+                onClick={openHub}
+                className="transition-transform duration-200 hover:scale-105"
+              >
+                <img src={hubTag} alt="Hub" className="h-12 sm:h-16 object-contain" />
+              </button>
+              <button
+                type="button"
+                aria-label="Open Preview"
+                onClick={openPreview}
+                className="transition-transform duration-200 hover:scale-105"
+              >
+                <img src={previewTag} alt="Preview" className="h-12 sm:h-16 object-contain" />
+              </button>
+              <button
+                type="button"
+                aria-label="Export Data"
+                onClick={() => setExportMenuOpen(true)}
+                className="transition-transform duration-200 hover:scale-105"
+              >
+                <img src={exportTag} alt="Export" className="h-12 sm:h-16 object-contain" />
+              </button>
               <button
                 type="button"
                 title={t("help")}
                 onClick={() => setHelpOpen(true)}
-                className={
-                  "print:hidden absolute right-0 top-0 h-10 w-10 rounded-xl border border-neutral-200 bg-white shadow-sm " +
-                  "flex items-center justify-center font-bold text-neutral-800 transition " +
-                  "hover:bg-[rgb(var(--ts-accent-rgb)/0.30)] hover:border-[var(--ts-accent)]"
-                }
-                aria-label={t("help")}
+                className={TAG_BUTTON_BASE + " h-16 w-16 text-4xl"}
+                style={{
+                  color: "#fff",
+                  textShadow: "0 0 5px #f00, 0 0 10px #f00, 0 0 15px #f00",
+                  transform: "rotate(12deg)",
+                }}
               >
                 ?
               </button>
             </div>
-
-            <div className="mt-3 flex items-center justify-end gap-2">
+            <div className="mt-2 flex items-center justify-end gap-2">
               <LanguageToggle lang={lang} setLang={setLang} />
             </div>
           </div>
