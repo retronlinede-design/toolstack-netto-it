@@ -4,6 +4,7 @@ import calcImg from "./assets/calc.png";
 import hubTag from "./assets/hub_tag.png";
 import previewTag from "./assets/preview_tag.png";
 import exportTag from "./assets/export_tag.png";
+import helpIcon from "./assets/help-icon.png";
 
 /**
  * ToolStack — Netto-It (German Net Salary Estimator) — v1
@@ -1159,14 +1160,9 @@ export default function App() {
                 type="button"
                 title={t("help")}
                 onClick={() => setHelpOpen(true)}
-                className={TAG_BUTTON_BASE + " h-16 w-16 text-4xl"}
-                style={{
-                  color: "#fff",
-                  textShadow: "0 0 5px #f00, 0 0 10px #f00, 0 0 15px #f00",
-                  transform: "rotate(12deg)",
-                }}
+                className={TAG_BUTTON_BASE + " h-16 w-16 bg-transparent"}
               >
-                ?
+                <img src={helpIcon} alt="Help" className="h-12 w-12 object-contain" />
               </button>
             </div>
             <div className="mt-2 flex items-center justify-end gap-2">
