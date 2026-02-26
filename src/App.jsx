@@ -133,6 +133,7 @@ const I18N = {
 
     resetAppData: "Reset app data",
     gotIt: "Got it",
+    cancel: "Cancel",
     resetConfirm: "Reset Netto-It data? This clears local storage for this app.",
     importFailed: "Import failed: invalid JSON file.",
 
@@ -259,6 +260,7 @@ const I18N = {
 
     resetAppData: "App-Daten zurücksetzen",
     gotIt: "Alles klar",
+    cancel: "Abbrechen",
     resetConfirm: "Netto-It Daten zurücksetzen? Das löscht den localStorage dieser App.",
     importFailed: "Import fehlgeschlagen: ungültige JSON-Datei.",
 
@@ -616,166 +618,164 @@ function HelpItem({ icon, title, body }) {
   );
 }
 
-function HelpModal({ open, onClose, onReset, lang }) {
+function HelpModal({ open, onClose, onReset, lang, onShowReset }) {
   if (!open) return null;
   const t = (k) => tFor(lang, k);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 print:hidden">
-      <div className="absolute inset-0 bg-neutral-900/60 backdrop-blur-sm transition-opacity" onClick={onClose} />
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity" onClick={onClose} />
 
       <div
         role="dialog"
         aria-modal="true"
-        className="relative w-full max-w-3xl max-h-[90vh] rounded-2xl bg-neutral-800 border-2 border-neutral-700 shadow-2xl overflow-hidden flex flex-col transform transition-all"
+        className="relative w-full max-w-3xl bg-white text-neutral-900 rounded-2xl shadow-2xl border border-neutral-200 overflow-hidden flex flex-col max-h-[90vh]"
       >
+        <div className="h-1 w-full bg-[var(--ts-accent)]" />
         {/* Header */}
-        <div className="shrink-0 p-6 flex items-start justify-between z-10">
-          <div className="transform -rotate-3">
-            <div
-              className="font-graffiti text-5xl tracking-tight"
-              style={{
-                color: "var(--ts-accent)",
-                textShadow: "-2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000",
-              }}
-            >
-              {t("help")} & Info
-            </div>
-            <div className="text-sm text-neutral-400 mt-2 ml-1">{t("helpSubtitle")}</div>
-          </div>
+        <div className="shrink-0 px-5 py-4 flex items-center justify-between border-b border-neutral-200">
+          <h2 className="font-bold text-lg text-neutral-800">{t("help")} & Info</h2>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-2 text-neutral-400 hover:bg-neutral-700 hover:text-white transition font-black text-2xl"
+            className="h-8 w-8 rounded-full flex items-center justify-center text-neutral-500 hover:bg-neutral-100 hover:text-neutral-800 transition focus:outline-none focus:ring-2 focus:ring-[var(--ts-accent)]"
           >
             &times;
           </button>
         </div>
 
         {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-neutral-800/50">
-          {/* Feature Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <HelpItem icon="💾" title={t("autosaveTitle")} body={t("autosaveBody")} />
-            <HelpItem icon="📤" title={t("exportTitle")} body={t("exportBody")} />
-            <HelpItem icon="📥" title={t("importTitle")} body={t("importBody")} />
-            <HelpItem icon="📄" title={t("pdfTitle")} body={t("pdfBody")} />
-          </div>
+        <div className="flex-1 overflow-y-auto p-5 space-y-6 text-neutral-700">
+          
+          {/* 1) About Netto-It */}
+          <section>
+            <h3 className="text-neutral-900 font-bold text-base mb-2">1) About Netto-It</h3>
+            <p className="text-sm leading-relaxed text-neutral-600">
+              Netto-It is a local-first income estimator designed to calculate approximate net salary from gross income based on German tax assumptions. It provides structured estimates and a clean printable summary. The app runs entirely in your browser with no accounts, no cloud storage, and no automatic data sharing.
+            </p>
+          </section>
 
-          {/* Limits (Warning style) */}
-          <div className="rounded-lg border border-red-500/30 bg-red-900/20 p-5">
-            <div className="flex items-center gap-3 mb-3 text-red-400 font-bold">
-              <span className="text-2xl">⚠️</span>
-              <span className="text-lg">{t("limitsTitle")}</span>
-            </div>
-            <ul className="space-y-2 text-sm text-red-300/80 list-disc pl-5 marker:text-red-500">
-              <li>{t("lim1")}</li>
-              <li>{t("lim2")}</li>
-              <li>{t("lim3")}</li>
-              <li>{t("lim4")}</li>
+          {/* 2) How Netto-It Works */}
+          <section>
+            <h3 className="text-neutral-900 font-bold text-base mb-2">2) How Netto-It Works</h3>
+            <p className="text-sm mb-2 text-neutral-600">Netto-It follows a simple workflow:</p>
+            <ol className="list-decimal list-inside text-sm space-y-1 ml-1 text-neutral-600">
+              <li><strong className="text-neutral-800">Enter Gross Income</strong> – Input your gross monthly or annual income.</li>
+              <li><strong className="text-neutral-800">Select Tax Parameters</strong> – Choose relevant tax class and contribution settings.</li>
+              <li><strong className="text-neutral-800">Review Calculations</strong> – Netto-It calculates estimated deductions and net income.</li>
+              <li><strong className="text-neutral-800">Preview & Print</strong> – Generate a clean, print-ready summary using Preview.</li>
+              <li><strong className="text-neutral-800">Export a Backup</strong> – Export a JSON backup if you want to save your inputs.</li>
+            </ol>
+          </section>
+
+          {/* 3) Your Data & Privacy */}
+          <section>
+            <h3 className="text-neutral-900 font-bold text-base mb-2">3) Your Data & Privacy</h3>
+            <p className="text-sm mb-2 text-neutral-600">Your data is saved locally in this browser using secure local storage.</p>
+            <p className="text-sm mb-1 text-neutral-600">This means:</p>
+            <ul className="list-disc list-inside text-sm space-y-1 ml-1 text-neutral-600">
+              <li>Your data stays on this device</li>
+              <li>Clearing browser data can remove saved inputs</li>
+              <li>Incognito/private mode will not retain data</li>
+              <li>Data does not automatically sync across devices</li>
             </ul>
-          </div>
+          </section>
 
-          {/* Official Calculator (Dark card) */}
-          <div className="rounded-xl bg-neutral-900 p-6 text-white relative overflow-hidden group">
-            <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-[var(--ts-accent)] rounded-full opacity-20 blur-2xl group-hover:opacity-30 transition duration-500"></div>
+          {/* 4) Backup & Restore */}
+          <section>
+            <h3 className="text-neutral-900 font-bold text-base mb-2">4) Backup & Restore</h3>
+            <p className="text-sm mb-2 text-neutral-600">Export downloads a JSON backup of your current Netto-It inputs.</p>
+            <p className="text-sm mb-2 text-neutral-600">Import restores a previously exported JSON file and replaces current app data.</p>
+            <p className="text-sm mb-1 text-neutral-600">Recommended routine:</p>
+            <ul className="list-disc list-inside text-sm space-y-1 ml-1 text-neutral-600">
+              <li>Export after important calculation setups</li>
+              <li>Store backups in at least one additional location if needed</li>
+            </ul>
+          </section>
 
-            <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div>
-                <div className="font-bold text-lg text-white">{t("officialTitle")}</div>
-                <div className="text-neutral-400 text-sm mt-1 max-w-md">{t("officialBody")}</div>
-              </div>
-              <a
-                href={OFFICIAL_URL}
-                target="_blank"
-                rel="noreferrer"
-                className="shrink-0 inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[var(--ts-accent)] text-neutral-800 font-bold text-sm hover:brightness-110 transition shadow-lg shadow-[rgba(var(--ts-accent-rgb),0.2)]"
-              >
-                {t("officialOpen")}
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-                </svg>
-              </a>
+          {/* 5) Buttons Explained */}
+          <section>
+            <h3 className="text-neutral-900 font-bold text-base mb-2">5) Buttons Explained</h3>
+            <ul className="list-none text-sm space-y-2 text-neutral-600">
+              <li><strong className="text-neutral-800">Preview</strong> – Opens the print-ready summary.</li>
+              <li><strong className="text-neutral-800">Print / Save PDF</strong> – Prints only the preview sheet. Choose “Save as PDF” to create a file.</li>
+              <li><strong className="text-neutral-800">Export</strong> – Downloads a JSON backup file.</li>
+              <li><strong className="text-neutral-800">Import</strong> – Restores data from a JSON backup file.</li>
+            </ul>
+          </section>
+
+          {/* 6) Storage Keys (Advanced) */}
+          <section>
+            <h3 className="text-neutral-900 font-bold text-base mb-2">6) Storage Keys (Advanced)</h3>
+            <div className="text-sm font-mono bg-neutral-100 text-neutral-700 p-3 rounded-lg border border-neutral-200">
+              <div>App data key: {KEY}</div>
+              <div>Shared profile key: {PROFILE_KEY}</div>
             </div>
-          </div>
+          </section>
 
-          {/* Footer / Meta */}
-          <div className="pt-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-neutral-500 border-t border-neutral-700 mt-4">
-            <div>
-              {t("storageKey")} <span className="font-mono text-neutral-400">{KEY}</span>
-            </div>
-            <button
-              type="button"
-              onClick={onReset}
-              className="text-red-500 hover:text-red-400 font-medium transition underline decoration-red-500/50 underline-offset-2"
-            >
-              {t("resetAppData")}
-            </button>
+          {/* 7) Notes / Limitations */}
+          <section>
+            <h3 className="text-neutral-900 font-bold text-base mb-2">7) Notes / Limitations</h3>
+            <ul className="list-disc list-inside text-sm space-y-1 ml-1 text-neutral-600">
+              <li>Netto-It provides estimates only. It does not replace official tax calculations.</li>
+              <li>Actual tax and contribution amounts may differ depending on personal circumstances.</li>
+              <li>For official calculations, consult the Bundesministerium der Finanzen (BMF) calculator or a tax advisor.</li>
+            </ul>
+          </section>
+
+          {/* 8) Support / Feedback */}
+          <section>
+            <h3 className="text-neutral-900 font-bold text-base mb-2">8) Support / Feedback</h3>
+            <p className="text-sm text-neutral-600">
+              If something appears incorrect, include: input values + tax class + device + browser + expected vs actual result.
+            </p>
+          </section>
+        </div>
+
+        {/* Footer */}
+        <div className="shrink-0 px-5 py-3 flex items-center justify-between border-t border-neutral-200 bg-neutral-50/50">
+          <div className="text-xs text-neutral-500">
+            {t("storageKey")} <span className="font-mono text-neutral-700">{KEY}</span>
           </div>
+          <button
+            type="button"
+            onClick={onShowReset}
+            className="text-red-500 hover:text-red-400 text-sm font-medium transition underline decoration-red-500/50 underline-offset-2 focus:outline-none focus:ring-2 focus:ring-red-300 rounded-md"
+          >
+            {t("resetAppData")}
+          </button>
         </div>
       </div>
     </div>
   );
 }
 
-function MenuButton({ icon, label, sub, onClick }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="group relative flex flex-col items-center justify-center rounded-xl border-2 border-neutral-700 bg-neutral-800 p-6 text-center transition-all hover:border-[var(--ts-accent)] hover:bg-neutral-700/50 active:scale-[0.98]"
-    >
-      <div
-        className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-neutral-900 text-3xl transition-transform duration-200 group-hover:-rotate-12 group-hover:scale-110 shadow-[inset_2px_2px_5px_rgba(0,0,0,0.5),inset_-2px_-2px_5px_rgba(255,255,255,0.05)]"
-        style={{ textShadow: "1px 1px 2px rgba(0,0,0,0.7)" }}
-      >
-        {icon}
-      </div>
-      <div className="font-graffiti text-xl text-white transition-colors group-hover:text-[var(--ts-accent)]">{label}</div>
-      <div className="mt-1 text-xs font-medium text-neutral-400">{sub}</div>
-    </button>
-  );
-}
-
 function ExportMenu({ open, onClose, actions, lang }) {
   if (!open) return null;
   const t = (k) => tFor(lang, k);
+  const btnClass = "w-full text-left px-4 py-3 rounded-lg font-semibold bg-white border border-neutral-200 text-neutral-800 hover:bg-neutral-50 hover:border-neutral-300 focus:outline-none focus:ring-2 focus:ring-[var(--ts-accent)] transition-colors";
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-8 print:hidden">
-      <div className="absolute inset-0 bg-neutral-900/60 backdrop-blur-sm transition-opacity" onClick={onClose} />
-      <div className="relative w-full max-w-lg transform overflow-hidden rounded-2xl bg-neutral-800 border-2 border-neutral-700 shadow-2xl transition-all">
-        <div className="p-6 flex items-start justify-between">
-          <div className="transform -rotate-2">
-            <div
-              className="font-graffiti text-4xl tracking-tight"
-              style={{
-                color: "#E0E0E0",
-                textShadow: "0 0 4px black, 0 0 8px var(--ts-accent), 0 0 12px var(--ts-accent)",
-              }}
-            >
-              {t("export")} & Actions
-            </div>
-            <div className="text-sm text-neutral-400 mt-2 ml-1">{t("actionsSubtitle")}</div>
-          </div>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 print:hidden">
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity" onClick={onClose} />
+      <div className="relative w-full max-w-sm bg-white text-neutral-900 rounded-2xl shadow-2xl border border-neutral-200 overflow-hidden flex flex-col">
+        <div className="h-1 w-full bg-[var(--ts-accent)]" />
+        <div className="shrink-0 px-5 py-4 flex items-center justify-between border-b border-neutral-200">
+          <h2 className="font-bold text-lg text-neutral-800">{t("export")} & Actions</h2>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-2 text-neutral-400 hover:bg-neutral-700 hover:text-white transition font-black text-2xl"
+            className="h-8 w-8 rounded-full flex items-center justify-center text-neutral-500 hover:bg-neutral-100 hover:text-neutral-800 transition focus:outline-none focus:ring-2 focus:ring-[var(--ts-accent)]"
           >
             &times;
           </button>
         </div>
 
-        <div className="p-6 pt-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <MenuButton icon="👁️" label={t("preview")} sub="View report" onClick={() => { actions.preview(); onClose(); }} />
-          <MenuButton icon="📄" label={t("savePdf")} sub="Print / PDF" onClick={() => { actions.pdf(); onClose(); }} />
-          <MenuButton icon="↓" label={t("export")} sub="Backup JSON" onClick={() => { actions.export(); onClose(); }} />
-          <MenuButton icon="↑" label={t("import")} sub="Restore JSON" onClick={() => { actions.import(); onClose(); }} />
-        </div>
-
-        <div className="bg-neutral-900/50 p-3 text-center text-xs text-neutral-500 font-medium">
-          ToolStack Netto-It
+        <div className="p-5 space-y-2">
+          <button type="button" className={btnClass} onClick={() => { actions.preview(); onClose(); }}>{t("preview")}</button>
+          <button type="button" className={btnClass} onClick={() => { actions.pdf(); onClose(); }}>{t("savePdf")}</button>
+          <button type="button" className={btnClass} onClick={() => { actions.export(); onClose(); }}>{t("export")}</button>
+          <button type="button" className={btnClass} onClick={() => { actions.import(); onClose(); }}>{t("import")}</button>
         </div>
       </div>
     </div>
@@ -928,6 +928,61 @@ function runNettoItSanityTests() {
   assert("tax class III returns finite values", Number.isFinite(tcIII.taxes.totalAnnual) && Number.isFinite(tcIII.netMonthly));
 }
 
+function ConfirmResetModal({ open, onClose, onConfirm, lang }) {
+  if (!open) return null;
+  const t = (k) => tFor(lang, k);
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 print:hidden">
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
+      <div
+        role="dialog"
+        aria-modal="true"
+        className="relative w-full max-w-md bg-white text-neutral-900 rounded-2xl shadow-2xl border border-neutral-200 overflow-hidden flex flex-col"
+      >
+        <div className="h-1 w-full bg-[var(--ts-accent)]" />
+        <div className="shrink-0 px-5 py-4 flex items-center justify-between border-b border-neutral-200">
+          <h2 className="font-bold text-lg text-neutral-800">{t("resetAppData")}</h2>
+          <button type="button" onClick={onClose} className="h-8 w-8 rounded-full flex items-center justify-center text-neutral-500 hover:bg-neutral-100 hover:text-neutral-800 transition focus:outline-none focus:ring-2 focus:ring-[var(--ts-accent)]">
+            &times;
+          </button>
+        </div>
+        <div className="p-5 text-neutral-700">{t("resetConfirm")}</div>
+        <div className="shrink-0 px-5 py-3 flex justify-end gap-3 border-t border-neutral-200 bg-neutral-50/50">
+          <button type="button" onClick={onClose} className="px-4 py-2 rounded-lg font-semibold bg-white border border-neutral-300 text-neutral-800 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-[var(--ts-accent)]">{t("cancel")}</button>
+          <button type="button" onClick={onConfirm} className="px-4 py-2 rounded-lg font-semibold bg-red-600 text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400">{t("resetAppData")}</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function AlertModal({ open, onClose, title, message, lang }) {
+  if (!open) return null;
+  const t = (k) => tFor(lang, k);
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 print:hidden">
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
+      <div role="alertdialog" aria-modal="true" className="relative w-full max-w-md bg-white text-neutral-900 rounded-2xl shadow-2xl border border-neutral-200 overflow-hidden flex flex-col">
+        <div className="h-1 w-full bg-[var(--ts-accent)]" />
+        <div className="shrink-0 px-5 py-4 flex items-center justify-between border-b border-neutral-200">
+          <h2 className="font-bold text-lg text-neutral-800">{title}</h2>
+          <button type="button" onClick={onClose} className="h-8 w-8 rounded-full flex items-center justify-center text-neutral-500 hover:bg-neutral-100 hover:text-neutral-800 transition focus:outline-none focus:ring-2 focus:ring-[var(--ts-accent)]">
+            &times;
+          </button>
+        </div>
+        <div className="p-5 text-neutral-700">{message}</div>
+        <div className="shrink-0 px-5 py-3 flex justify-end gap-3 border-t border-neutral-200 bg-neutral-50/50">
+          <button type="button" onClick={onClose} className="px-4 py-2 rounded-lg font-semibold bg-neutral-800 text-white hover:bg-neutral-700 focus:outline-none focus:ring-2 focus:ring-[var(--ts-accent)]">
+            {t("gotIt")}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   const [lang, setLang] = useState(() => {
     try {
@@ -957,6 +1012,8 @@ export default function App() {
   const [helpOpen, setHelpOpen] = useState(false);
   const [exportMenuOpen, setExportMenuOpen] = useState(false);
   const [importing, setImporting] = useState(false);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [importError, setImportError] = useState('');
 
   const fileRef = useRef(null);
 
@@ -1004,19 +1061,23 @@ export default function App() {
       const incoming = json?.data || json;
       setData({ ...defaultData, ...incoming });
     } catch {
-      alert(t("importFailed"));
+      setImportError(t("importFailed"));
     } finally {
       setImporting(false);
       if (fileRef.current) fileRef.current.value = "";
     }
   };
 
-  const resetAppData = () => {
-    const ok = window.confirm(t("resetConfirm"));
-    if (!ok) return;
+  const handleResetConfirm = () => {
     localStorage.removeItem(KEY);
     setData({ ...defaultData });
+    setShowResetConfirm(false);
     setHelpOpen(false);
+  };
+
+  const resetAppData = () => {
+    // This just opens the confirmation modal
+    setShowResetConfirm(true);
   };
 
   const openPreview = () => setPreviewOpen(true);
@@ -1069,7 +1130,12 @@ export default function App() {
         ${printScopeStyle}
       `}</style>
 
-      <HelpModal open={helpOpen} onClose={() => setHelpOpen(false)} onReset={resetAppData} lang={lang} />
+      <HelpModal open={helpOpen} onClose={() => setHelpOpen(false)} onShowReset={resetAppData} lang={lang} />
+
+      <ConfirmResetModal open={showResetConfirm} onClose={() => setShowResetConfirm(false)} onConfirm={handleResetConfirm} lang={lang} />
+
+      <AlertModal open={!!importError} onClose={() => setImportError('')} title={t("importFailed")} message={importError} lang={lang} />
+
       
       <ExportMenu 
         open={exportMenuOpen} 
@@ -1085,33 +1151,30 @@ export default function App() {
 
       {/* Preview Modal */}
       {previewOpen ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-8">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setPreviewOpen(false)} />
-          <div className="relative w-full max-w-5xl">
-            <div className="mb-3 rounded-2xl bg-white border border-neutral-200 shadow-sm p-3 flex items-center justify-between gap-3">
-              <div className="text-lg font-semibold text-neutral-800">{t("printPreviewTitle")}</div>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  className="px-3 py-2 rounded-xl text-sm font-extrabold border border-[var(--ts-accent)] bg-[var(--ts-accent)] text-neutral-800 transition hover:brightness-95"
-                  onClick={() => window.print()}
-                >
-                  {t("savePdf")}
-                </button>
-                <button
-                  type="button"
-                  className="px-3 py-2 rounded-xl text-sm font-medium border border-neutral-700 bg-neutral-700 text-white hover:bg-neutral-600 transition"
-                  onClick={() => setPreviewOpen(false)}
-                >
-                  {t("close")}
-                </button>
-              </div>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 print:hidden">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setPreviewOpen(false)} />
+          <div
+            role="dialog"
+            aria-modal="true"
+            className="relative w-full max-w-5xl bg-white text-neutral-900 rounded-2xl shadow-2xl border border-neutral-200 overflow-hidden flex flex-col max-h-[90vh]"
+          >
+            <div className="h-1 w-full bg-[var(--ts-accent)]" />
+            <div className="shrink-0 px-5 py-4 flex items-center justify-between border-b border-neutral-200">
+              <h2 className="font-bold text-lg text-neutral-800">{t("printPreviewTitle")}</h2>
+              <button type="button" onClick={() => setPreviewOpen(false)} className="h-8 w-8 rounded-full flex items-center justify-center text-neutral-500 hover:bg-neutral-100 hover:text-neutral-800 transition focus:outline-none focus:ring-2 focus:ring-[var(--ts-accent)]">
+                &times;
+              </button>
             </div>
-
-            <div className="rounded-2xl bg-white border border-neutral-200 shadow-xl overflow-auto max-h-[80vh]">
-              <div id="nettoit-print-preview" className="p-6">
-                <ReportSheet data={data} breakdown={breakdown} lang={lang} />
-              </div>
+            <div id="nettoit-print-preview" className="p-6 overflow-y-auto">
+              <ReportSheet data={data} breakdown={breakdown} lang={lang} />
+            </div>
+            <div className="shrink-0 px-5 py-3 flex justify-end gap-3 border-t border-neutral-200 bg-neutral-50/50">
+              <button type="button" onClick={() => setPreviewOpen(false)} className="px-4 py-2 rounded-lg font-semibold bg-white border border-neutral-300 text-neutral-800 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-[var(--ts-accent)]">
+                {t("close")}
+              </button>
+              <button type="button" onClick={() => window.print()} className="px-4 py-2 rounded-lg font-semibold bg-neutral-800 text-white hover:bg-neutral-700 focus:outline-none focus:ring-2 focus:ring-[var(--ts-accent)]">
+                {t("savePdf")}
+              </button>
             </div>
           </div>
         </div>
@@ -1387,8 +1450,8 @@ export default function App() {
 
         {/* Import micro-state */}
         {importing ? (
-          <div className="fixed bottom-6 right-6 rounded-2xl bg-neutral-800 text-white px-4 py-3 shadow-xl print:hidden">
-            <div className="text-sm">{t("importing")}</div>
+          <div className="fixed bottom-6 right-6 rounded-xl bg-white text-neutral-800 px-4 py-3 shadow-lg border border-neutral-200 print:hidden">
+            <div className="text-sm font-semibold">{t("importing")}</div>
           </div>
         ) : null}
       </div>
