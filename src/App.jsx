@@ -755,13 +755,23 @@ function ExportMenu({ open, onClose, actions, lang }) {
   const t = (k) => tFor(lang, k);
   const btnClass = "w-full text-left px-4 py-3 rounded-lg font-semibold bg-white border border-neutral-200 text-neutral-800 hover:bg-neutral-50 hover:border-neutral-300 focus:outline-none focus:ring-2 focus:ring-[var(--ts-accent)] transition-colors";
 
+  const today = new Date().toISOString().slice(0, 10);
+  const subject = encodeURIComponent(`Netto-It Export Pack – ${today}`);
+  const body = encodeURIComponent(
+    "Attached: PDF export from Netto-It (please attach the downloaded PDF file).\n\n" +
+    "Exports are generated locally on your device. No data is uploaded automatically."
+  );
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 print:hidden">
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity" onClick={onClose} />
       <div className="relative w-full max-w-sm bg-white text-neutral-900 rounded-2xl shadow-2xl border border-neutral-200 overflow-hidden flex flex-col">
         <div className="h-1 w-full bg-[var(--ts-accent)]" />
         <div className="shrink-0 px-5 py-4 flex items-center justify-between border-b border-neutral-200">
-          <h2 className="font-bold text-lg text-neutral-800">{t("export")} & Actions</h2>
+          <div>
+            <h2 className="font-bold text-lg text-neutral-800">Export Pack</h2>
+            <div className="text-xs text-neutral-500">Save, share, or back up your data.</div>
+          </div>
           <button
             type="button"
             onClick={onClose}
@@ -771,11 +781,24 @@ function ExportMenu({ open, onClose, actions, lang }) {
           </button>
         </div>
 
-        <div className="p-5 space-y-2">
-          <button type="button" className={btnClass} onClick={() => { actions.preview(); onClose(); }}>{t("preview")}</button>
-          <button type="button" className={btnClass} onClick={() => { actions.pdf(); onClose(); }}>{t("savePdf")}</button>
-          <button type="button" className={btnClass} onClick={() => { actions.export(); onClose(); }}>{t("export")}</button>
-          <button type="button" className={btnClass} onClick={() => { actions.import(); onClose(); }}>{t("import")}</button>
+        <div className="p-5 space-y-4 overflow-y-auto max-h-[70vh]">
+          <div className="space-y-2">
+            <div className="text-xs font-bold text-neutral-400 uppercase tracking-wider">PDF & Print</div>
+            <button type="button" className={btnClass} onClick={() => { actions.pdf(); onClose(); }}>Download PDF</button>
+            <button type="button" className={btnClass} onClick={() => { actions.pdf(); onClose(); }}>Print / Save PDF</button>
+            <a href={`mailto:?subject=${subject}&body=${body}`} className={btnClass + " block"} onClick={onClose}>
+              Create Email Draft
+            </a>
+          </div>
+
+          <div className="space-y-2">
+            <div className="text-xs font-bold text-neutral-400 uppercase tracking-wider">JSON Backup</div>
+            <button type="button" className={btnClass} onClick={() => { actions.export(); onClose(); }}>Download JSON</button>
+            <div>
+              <button type="button" className={btnClass} onClick={() => { actions.import(); onClose(); }}>Import JSON</button>
+              <div className="mt-1 px-1 text-xs text-neutral-500">Import replaces current app data. Export first if unsure.</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
