@@ -91,6 +91,10 @@ const I18N = {
     taxesMonthly: "Taxes (monthly)",
     socialMonthly: "Social (monthly)",
 
+    yearlyTotals: "Yearly Totals",
+    socialAnnual: "Social (annual)",
+    netAnnual: "Net (annual)",
+
     incomeTax: "Income tax",
     soli: "Solidarity surcharge",
     church: "Church tax",
@@ -137,6 +141,43 @@ const I18N = {
     resetConfirm: "Reset Netto-It data? This clears local storage for this app.",
     importFailed: "Import failed: invalid JSON file.",
 
+    // New Help Modal
+    helpAndInfo: "Help & Info",
+    helpAboutTitle: "1) About Netto-It",
+    helpAboutBody: "Netto-It is a local-first income estimator designed to calculate approximate net salary from gross income based on German tax assumptions. It provides structured estimates and a clean printable summary. The app runs entirely in your browser with no accounts, no cloud storage, and no automatic data sharing.",
+    helpHowToTitle: "2) How Netto-It Works",
+    helpHowToBody: "Netto-It follows a simple workflow:",
+    helpHowToStep1: "Enter Gross Income – Input your gross monthly or annual income.",
+    helpHowToStep2: "Select Tax Parameters – Choose relevant tax class and contribution settings.",
+    helpHowToStep3: "Review Calculations – Netto-It calculates estimated deductions and net income.",
+    helpHowToStep4: "Preview & Print – Generate a clean, print-ready summary using Preview.",
+    helpHowToStep5: "Export a Backup – Export a JSON backup if you want to save your inputs.",
+    helpDataTitle: "3) Your Data & Privacy",
+    helpDataBody1: "Your data is saved locally in this browser using secure local storage.",
+    helpDataBody2: "This means:",
+    helpDataPoint1: "Your data stays on this device",
+    helpDataPoint2: "Clearing browser data can remove saved inputs",
+    helpDataPoint3: "Incognito/private mode will not retain data",
+    helpDataPoint4: "Data does not automatically sync across devices",
+    helpBackupTitle: "4) Backup & Restore",
+    helpBackupBody1: "Export downloads a JSON backup of your current Netto-It inputs.",
+    helpBackupBody2: "Import restores a previously exported JSON file and replaces current app data.",
+    helpBackupBody3: "Recommended routine:",
+    helpBackupPoint1: "Export after important calculation setups",
+    helpBackupPoint2: "Store backups in at least one additional location if needed",
+    helpButtonsTitle: "5) Buttons Explained",
+    helpButtonsPreview: "Preview – Opens the print-ready summary.",
+    helpButtonsPdf: "Print / Save PDF – Prints only the preview sheet. Choose “Save as PDF” to create a file.",
+    helpButtonsExport: "Export – Downloads a JSON backup file.",
+    helpButtonsImport: "Import – Restores data from a JSON backup file.",
+    helpStorageTitle: "6) Storage Keys (Advanced)",
+    helpLimitsTitle: "7) Notes / Limitations",
+    helpLimitsPoint1: "Netto-It provides estimates only. It does not replace official tax calculations.",
+    helpLimitsPoint2: "Actual tax and contribution amounts may differ depending on personal circumstances.",
+    helpLimitsPoint3: "For official calculations, consult the Bundesministerium der Finanzen (BMF) calculator or a tax advisor.",
+    helpSupportTitle: "8) Support / Feedback",
+    helpSupportBody: "If something appears incorrect, include: input values + tax class + device + browser + expected vs actual result.",
+
     // Report
     reportSubtitle: "German net salary estimate (gross → net)",
     generated: "Generated:",
@@ -154,6 +195,21 @@ const I18N = {
     disc1: "This is a simplified estimate. Your actual payroll net can differ.",
     disc2: "Tax class V/VI are approximations; PKV is only modeled via optional premium input.",
     disc3: "Solidarity surcharge uses annual income tax thresholds (2026).",
+
+    // Export Menu
+    exportPackTitle: "Export Pack",
+    exportPackSubtitle: "Save, share, or back up your data.",
+    exportPdfPrint: "PDF & Print",
+    exportDownloadPdf: "Download PDF",
+    exportPrintSavePdf: "Print / Save PDF",
+    exportCreateEmail: "Create Email Draft",
+    exportJsonBackup: "JSON Backup",
+    exportDownloadJson: "Download JSON",
+    exportImportJson: "Import JSON",
+    exportImportWarning: "Import replaces current app data. Export first if unsure.",
+    exportEmailSubject: "Netto-It Export Pack – {date}",
+    exportEmailBody:
+      "Attached: PDF export from Netto-It (please attach the downloaded PDF file).\n\nExports are generated locally on your device. No data is uploaded automatically.",
 
     // Notes
     notePrivate:
@@ -217,6 +273,10 @@ const I18N = {
     taxesMonthly: "Steuern (monatlich)",
     socialMonthly: "Sozial (monatlich)",
 
+    yearlyTotals: "Jahreswerte",
+    socialAnnual: "Sozialabgaben (jährlich)",
+    netAnnual: "Netto (jährlich)",
+
     incomeTax: "Lohn-/Einkommensteuer",
     soli: "Solidaritätszuschlag",
     church: "Kirchensteuer",
@@ -264,6 +324,43 @@ const I18N = {
     resetConfirm: "Netto-It Daten zurücksetzen? Das löscht den localStorage dieser App.",
     importFailed: "Import fehlgeschlagen: ungültige JSON-Datei.",
 
+    // New Help Modal
+    helpAndInfo: "Hilfe & Info",
+    helpAboutTitle: "1) Über Netto-It",
+    helpAboutBody: "Netto-It ist ein lokaler Gehaltsschätzer, der das ungefähre Nettogehalt aus dem Bruttoeinkommen basierend auf deutschen Steuerannahmen berechnet. Er liefert strukturierte Schätzungen und eine saubere, druckbare Zusammenfassung. Die App läuft vollständig in deinem Browser ohne Konten, ohne Cloud-Speicher und ohne automatische Datenweitergabe.",
+    helpHowToTitle: "2) Wie Netto-It funktioniert",
+    helpHowToBody: "Netto-It folgt einem einfachen Arbeitsablauf:",
+    helpHowToStep1: "Bruttoeinkommen eingeben – Gib dein monatliches oder jährliches Bruttoeinkommen ein.",
+    helpHowToStep2: "Steuerparameter auswählen – Wähle die relevante Steuerklasse und Beitragseinstellungen.",
+    helpHowToStep3: "Berechnungen überprüfen – Netto-It berechnet geschätzte Abzüge und das Nettoeinkommen.",
+    helpHowToStep4: "Vorschau & Drucken – Erstelle eine saubere, druckfertige Zusammenfassung über die Vorschau.",
+    helpHowToStep5: "Backup exportieren – Exportiere ein JSON-Backup, um deine Eingaben zu speichern.",
+    helpDataTitle: "3) Deine Daten & Datenschutz",
+    helpDataBody1: "Deine Daten werden lokal in diesem Browser im sicheren Local Storage gespeichert.",
+    helpDataBody2: "Das bedeutet:",
+    helpDataPoint1: "Deine Daten bleiben auf diesem Gerät",
+    helpDataPoint2: "Das Löschen von Browserdaten kann gespeicherte Eingaben entfernen",
+    helpDataPoint3: "Der Inkognito-/Privatmodus speichert keine Daten",
+    helpDataPoint4: "Daten werden nicht automatisch zwischen Geräten synchronisiert",
+    helpBackupTitle: "4) Backup & Wiederherstellung",
+    helpBackupBody1: "Export lädt ein JSON-Backup deiner aktuellen Netto-It-Eingaben herunter.",
+    helpBackupBody2: "Import stellt eine zuvor exportierte JSON-Datei wieder her und ersetzt die aktuellen App-Daten.",
+    helpBackupBody3: "Empfohlene Routine:",
+    helpBackupPoint1: "Nach wichtigen Berechnungseinstellungen exportieren",
+    helpBackupPoint2: "Backups bei Bedarf an mindestens einem zusätzlichen Ort speichern",
+    helpButtonsTitle: "5) Schaltflächen erklärt",
+    helpButtonsPreview: "Vorschau – Öffnet die druckfertige Zusammenfassung.",
+    helpButtonsPdf: "Drucken / PDF speichern – Druckt nur das Vorschau-Blatt. Wähle „Als PDF speichern“, um eine Datei zu erstellen.",
+    helpButtonsExport: "Export – Lädt eine JSON-Backup-Datei herunter.",
+    helpButtonsImport: "Import – Stellt Daten aus einer JSON-Backup-Datei wieder her.",
+    helpStorageTitle: "6) Storage-Keys (Erweitert)",
+    helpLimitsTitle: "7) Hinweise / Einschränkungen",
+    helpLimitsPoint1: "Netto-It liefert nur Schätzungen. Es ersetzt keine offiziellen Steuerberechnungen.",
+    helpLimitsPoint2: "Tatsächliche Steuer- und Beitragsbeträge können je nach persönlichen Umständen abweichen.",
+    helpLimitsPoint3: "Für offizielle Berechnungen konsultiere den Rechner des Bundesministeriums der Finanzen (BMF) oder einen Steuerberater.",
+    helpSupportTitle: "8) Support / Feedback",
+    helpSupportBody: "Wenn etwas fehlerhaft erscheint, gib bitte an: Eingabewerte + Steuerklasse + Gerät + Browser + erwartetes vs. tatsächliches Ergebnis.",
+
     // Report
     reportSubtitle: "Netto-Schätzung (Brutto → Netto)",
     generated: "Erstellt:",
@@ -281,6 +378,21 @@ const I18N = {
     disc1: "Das ist eine vereinfachte Schätzung. Dein tatsächliches Netto kann abweichen.",
     disc2: "Steuerklasse V/VI sind Näherungen; PKV nur über optional eingetragene Prämie.",
     disc3: "Soli nutzt jährliche Einkommensteuer-Schwellen (2026).",
+
+    // Export Menu
+    exportPackTitle: "Export-Paket",
+    exportPackSubtitle: "Daten speichern, teilen oder sichern.",
+    exportPdfPrint: "PDF & Drucken",
+    exportDownloadPdf: "PDF herunterladen",
+    exportPrintSavePdf: "Drucken / PDF speichern",
+    exportCreateEmail: "E-Mail-Entwurf erstellen",
+    exportJsonBackup: "JSON-Backup",
+    exportDownloadJson: "JSON herunterladen",
+    exportImportJson: "JSON importieren",
+    exportImportWarning: "Import ersetzt aktuelle App-Daten. Im Zweifel zuerst exportieren.",
+    exportEmailSubject: "Netto-It Export-Paket – {date}",
+    exportEmailBody:
+      "Anbei: PDF-Export von Netto-It (bitte die heruntergeladene PDF-Datei anhängen).\n\nExporte werden lokal auf deinem Gerät erstellt. Es werden keine Daten automatisch hochgeladen.",
 
     // Notes
     notePrivate:
@@ -634,7 +746,7 @@ function HelpModal({ open, onClose, onReset, lang, onShowReset }) {
         <div className="h-1 w-full bg-[var(--ts-accent)]" />
         {/* Header */}
         <div className="shrink-0 px-5 py-4 flex items-center justify-between border-b border-neutral-200">
-          <h2 className="font-bold text-lg text-neutral-800">{t("help")} & Info</h2>
+          <h2 className="font-bold text-lg text-neutral-800">{t("helpAndInfo")}</h2>
           <button
             type="button"
             onClick={onClose}
@@ -649,85 +761,85 @@ function HelpModal({ open, onClose, onReset, lang, onShowReset }) {
           
           {/* 1) About Netto-It */}
           <section>
-            <h3 className="text-neutral-900 font-bold text-base mb-2">1) About Netto-It</h3>
+            <h3 className="text-neutral-900 font-bold text-base mb-2">{t("helpAboutTitle")}</h3>
             <p className="text-sm leading-relaxed text-neutral-600">
-              Netto-It is a local-first income estimator designed to calculate approximate net salary from gross income based on German tax assumptions. It provides structured estimates and a clean printable summary. The app runs entirely in your browser with no accounts, no cloud storage, and no automatic data sharing.
+              {t("helpAboutBody")}
             </p>
           </section>
 
           {/* 2) How Netto-It Works */}
           <section>
-            <h3 className="text-neutral-900 font-bold text-base mb-2">2) How Netto-It Works</h3>
-            <p className="text-sm mb-2 text-neutral-600">Netto-It follows a simple workflow:</p>
+            <h3 className="text-neutral-900 font-bold text-base mb-2">{t("helpHowToTitle")}</h3>
+            <p className="text-sm mb-2 text-neutral-600">{t("helpHowToBody")}</p>
             <ol className="list-decimal list-inside text-sm space-y-1 ml-1 text-neutral-600">
-              <li><strong className="text-neutral-800">Enter Gross Income</strong> – Input your gross monthly or annual income.</li>
-              <li><strong className="text-neutral-800">Select Tax Parameters</strong> – Choose relevant tax class and contribution settings.</li>
-              <li><strong className="text-neutral-800">Review Calculations</strong> – Netto-It calculates estimated deductions and net income.</li>
-              <li><strong className="text-neutral-800">Preview & Print</strong> – Generate a clean, print-ready summary using Preview.</li>
-              <li><strong className="text-neutral-800">Export a Backup</strong> – Export a JSON backup if you want to save your inputs.</li>
+              <li>{t("helpHowToStep1")}</li>
+              <li>{t("helpHowToStep2")}</li>
+              <li>{t("helpHowToStep3")}</li>
+              <li>{t("helpHowToStep4")}</li>
+              <li>{t("helpHowToStep5")}</li>
             </ol>
           </section>
 
           {/* 3) Your Data & Privacy */}
           <section>
-            <h3 className="text-neutral-900 font-bold text-base mb-2">3) Your Data & Privacy</h3>
-            <p className="text-sm mb-2 text-neutral-600">Your data is saved locally in this browser using secure local storage.</p>
-            <p className="text-sm mb-1 text-neutral-600">This means:</p>
+            <h3 className="text-neutral-900 font-bold text-base mb-2">{t("helpDataTitle")}</h3>
+            <p className="text-sm mb-2 text-neutral-600">{t("helpDataBody1")}</p>
+            <p className="text-sm mb-1 text-neutral-600">{t("helpDataBody2")}</p>
             <ul className="list-disc list-inside text-sm space-y-1 ml-1 text-neutral-600">
-              <li>Your data stays on this device</li>
-              <li>Clearing browser data can remove saved inputs</li>
-              <li>Incognito/private mode will not retain data</li>
-              <li>Data does not automatically sync across devices</li>
+              <li>{t("helpDataPoint1")}</li>
+              <li>{t("helpDataPoint2")}</li>
+              <li>{t("helpDataPoint3")}</li>
+              <li>{t("helpDataPoint4")}</li>
             </ul>
           </section>
 
           {/* 4) Backup & Restore */}
           <section>
-            <h3 className="text-neutral-900 font-bold text-base mb-2">4) Backup & Restore</h3>
-            <p className="text-sm mb-2 text-neutral-600">Export downloads a JSON backup of your current Netto-It inputs.</p>
-            <p className="text-sm mb-2 text-neutral-600">Import restores a previously exported JSON file and replaces current app data.</p>
-            <p className="text-sm mb-1 text-neutral-600">Recommended routine:</p>
+            <h3 className="text-neutral-900 font-bold text-base mb-2">{t("helpBackupTitle")}</h3>
+            <p className="text-sm mb-2 text-neutral-600">{t("helpBackupBody1")}</p>
+            <p className="text-sm mb-2 text-neutral-600">{t("helpBackupBody2")}</p>
+            <p className="text-sm mb-1 text-neutral-600">{t("helpBackupBody3")}</p>
             <ul className="list-disc list-inside text-sm space-y-1 ml-1 text-neutral-600">
-              <li>Export after important calculation setups</li>
-              <li>Store backups in at least one additional location if needed</li>
+              <li>{t("helpBackupPoint1")}</li>
+              <li>{t("helpBackupPoint2")}</li>
             </ul>
           </section>
 
           {/* 5) Buttons Explained */}
           <section>
-            <h3 className="text-neutral-900 font-bold text-base mb-2">5) Buttons Explained</h3>
+            <h3 className="text-neutral-900 font-bold text-base mb-2">{t("helpButtonsTitle")}</h3>
             <ul className="list-none text-sm space-y-2 text-neutral-600">
-              <li><strong className="text-neutral-800">Preview</strong> – Opens the print-ready summary.</li>
-              <li><strong className="text-neutral-800">Print / Save PDF</strong> – Prints only the preview sheet. Choose “Save as PDF” to create a file.</li>
-              <li><strong className="text-neutral-800">Export</strong> – Downloads a JSON backup file.</li>
-              <li><strong className="text-neutral-800">Import</strong> – Restores data from a JSON backup file.</li>
+              <li><strong className="text-neutral-800">{t("preview")}</strong> – {t("helpButtonsPreview").split("–")[1]}</li>
+              <li><strong className="text-neutral-800">{t("savePdf")}</strong> – {t("helpButtonsPdf").split("–")[1]}</li>
+              <li><strong className="text-neutral-800">{t("export")}</strong> – {t("helpButtonsExport").split("–")[1]}</li>
+              <li><strong className="text-neutral-800">{t("import")}</strong> – {t("helpButtonsImport").split("–")[1]}</li>
             </ul>
           </section>
 
           {/* 6) Storage Keys (Advanced) */}
           <section>
-            <h3 className="text-neutral-900 font-bold text-base mb-2">6) Storage Keys (Advanced)</h3>
+            <h3 className="text-neutral-900 font-bold text-base mb-2">{t("helpStorageTitle")}</h3>
             <div className="text-sm font-mono bg-neutral-100 text-neutral-700 p-3 rounded-lg border border-neutral-200">
-              <div>App data key: {KEY}</div>
-              <div>Shared profile key: {PROFILE_KEY}</div>
+              <div>{t("storageKey")} {KEY}</div>
+              <div>{t("reservedProfileKey")} {PROFILE_KEY}</div>
             </div>
           </section>
 
           {/* 7) Notes / Limitations */}
           <section>
-            <h3 className="text-neutral-900 font-bold text-base mb-2">7) Notes / Limitations</h3>
+            <h3 className="text-neutral-900 font-bold text-base mb-2">{t("helpLimitsTitle")}</h3>
             <ul className="list-disc list-inside text-sm space-y-1 ml-1 text-neutral-600">
-              <li>Netto-It provides estimates only. It does not replace official tax calculations.</li>
-              <li>Actual tax and contribution amounts may differ depending on personal circumstances.</li>
-              <li>For official calculations, consult the Bundesministerium der Finanzen (BMF) calculator or a tax advisor.</li>
+              <li>{t("helpLimitsPoint1")}</li>
+              <li>{t("helpLimitsPoint2")}</li>
+              <li>{t("helpLimitsPoint3")}</li>
             </ul>
           </section>
 
           {/* 8) Support / Feedback */}
           <section>
-            <h3 className="text-neutral-900 font-bold text-base mb-2">8) Support / Feedback</h3>
+            <h3 className="text-neutral-900 font-bold text-base mb-2">{t("helpSupportTitle")}</h3>
             <p className="text-sm text-neutral-600">
-              If something appears incorrect, include: input values + tax class + device + browser + expected vs actual result.
+              {t("helpSupportBody")}
             </p>
           </section>
         </div>
@@ -752,15 +864,18 @@ function HelpModal({ open, onClose, onReset, lang, onShowReset }) {
 
 function ExportMenu({ open, onClose, actions, lang }) {
   if (!open) return null;
-  const t = (k) => tFor(lang, k);
+  const t = (k, replacements = {}) => {
+    let str = tFor(lang, k);
+    for (const key in replacements) {
+      str = str.replace(`{${key}}`, replacements[key]);
+    }
+    return str;
+  };
   const btnClass = "w-full text-left px-4 py-3 rounded-lg font-semibold bg-white border border-neutral-200 text-neutral-800 hover:bg-neutral-50 hover:border-neutral-300 focus:outline-none focus:ring-2 focus:ring-[var(--ts-accent)] transition-colors";
 
   const today = new Date().toISOString().slice(0, 10);
-  const subject = encodeURIComponent(`Netto-It Export Pack – ${today}`);
-  const body = encodeURIComponent(
-    "Attached: PDF export from Netto-It (please attach the downloaded PDF file).\n\n" +
-    "Exports are generated locally on your device. No data is uploaded automatically."
-  );
+  const subject = encodeURIComponent(t("exportEmailSubject", { date: today }));
+  const body = encodeURIComponent(t("exportEmailBody"));
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 print:hidden">
@@ -769,8 +884,8 @@ function ExportMenu({ open, onClose, actions, lang }) {
         <div className="h-1 w-full bg-[var(--ts-accent)]" />
         <div className="shrink-0 px-5 py-4 flex items-center justify-between border-b border-neutral-200">
           <div>
-            <h2 className="font-bold text-lg text-neutral-800">Export Pack</h2>
-            <div className="text-xs text-neutral-500">Save, share, or back up your data.</div>
+            <h2 className="font-bold text-lg text-neutral-800">{t("exportPackTitle")}</h2>
+            <div className="text-xs text-neutral-500">{t("exportPackSubtitle")}</div>
           </div>
           <button
             type="button"
@@ -783,20 +898,20 @@ function ExportMenu({ open, onClose, actions, lang }) {
 
         <div className="p-5 space-y-4 overflow-y-auto max-h-[70vh]">
           <div className="space-y-2">
-            <div className="text-xs font-bold text-neutral-400 uppercase tracking-wider">PDF & Print</div>
-            <button type="button" className={btnClass} onClick={() => { actions.pdf(); onClose(); }}>Download PDF</button>
-            <button type="button" className={btnClass} onClick={() => { actions.pdf(); onClose(); }}>Print / Save PDF</button>
+            <div className="text-xs font-bold text-neutral-400 uppercase tracking-wider">{t("exportPdfPrint")}</div>
+            <button type="button" className={btnClass} onClick={() => { actions.pdf(); onClose(); }}>{t("exportDownloadPdf")}</button>
+            <button type="button" className={btnClass} onClick={() => { actions.pdf(); onClose(); }}>{t("exportPrintSavePdf")}</button>
             <a href={`mailto:?subject=${subject}&body=${body}`} className={btnClass + " block"} onClick={onClose}>
-              Create Email Draft
+              {t("exportCreateEmail")}
             </a>
           </div>
 
           <div className="space-y-2">
-            <div className="text-xs font-bold text-neutral-400 uppercase tracking-wider">JSON Backup</div>
-            <button type="button" className={btnClass} onClick={() => { actions.export(); onClose(); }}>Download JSON</button>
+            <div className="text-xs font-bold text-neutral-400 uppercase tracking-wider">{t("exportJsonBackup")}</div>
+            <button type="button" className={btnClass} onClick={() => { actions.export(); onClose(); }}>{t("exportDownloadJson")}</button>
             <div>
-              <button type="button" className={btnClass} onClick={() => { actions.import(); onClose(); }}>Import JSON</button>
-              <div className="mt-1 px-1 text-xs text-neutral-500">Import replaces current app data. Export first if unsure.</div>
+              <button type="button" className={btnClass} onClick={() => { actions.import(); onClose(); }}>{t("exportImportJson")}</button>
+              <div className="mt-1 px-1 text-xs text-neutral-500">{t("exportImportWarning")}</div>
             </div>
           </div>
         </div>
@@ -1125,17 +1240,6 @@ export default function App() {
 
   const taxesMonthly = (breakdown.taxes.totalAnnual || 0) / 12;
 
-  // -------- print scoping (print ONLY preview sheet) --------
-  const printScopeStyle = previewOpen
-    ? `
-      @media print {
-        body * { visibility: hidden !important; }
-        #nettoit-print-preview, #nettoit-print-preview * { visibility: visible !important; }
-        #nettoit-print-preview { position: absolute !important; left: 0; top: 0; width: 100%; }
-      }
-    `
-    : "";
-
   return (
     <div
       className="min-h-screen bg-neutral-50 text-neutral-800"
@@ -1150,7 +1254,6 @@ export default function App() {
           body { background: white !important; }
           .print\\:hidden { display: none !important; }
         }
-        ${printScopeStyle}
       `}</style>
 
       <HelpModal open={helpOpen} onClose={() => setHelpOpen(false)} onShowReset={resetAppData} lang={lang} />
@@ -1174,24 +1277,24 @@ export default function App() {
 
       {/* Preview Modal */}
       {previewOpen ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 print:hidden">
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setPreviewOpen(false)} />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 print:static print:p-0">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm print:hidden" onClick={() => setPreviewOpen(false)} />
           <div
             role="dialog"
             aria-modal="true"
-            className="relative w-full max-w-5xl bg-white text-neutral-900 rounded-2xl shadow-2xl border border-neutral-200 overflow-hidden flex flex-col max-h-[90vh]"
+            className="relative w-full max-w-5xl bg-white text-neutral-900 rounded-2xl shadow-2xl border border-neutral-200 overflow-hidden flex flex-col max-h-[90vh] print:static print:w-auto print:max-w-none print:max-h-none print:rounded-none print:shadow-none print:border-none print:overflow-visible"
           >
-            <div className="h-1 w-full bg-[var(--ts-accent)]" />
-            <div className="shrink-0 px-5 py-4 flex items-center justify-between border-b border-neutral-200">
+            <div className="h-1 w-full bg-[var(--ts-accent)] print:hidden" />
+            <div className="shrink-0 px-5 py-4 flex items-center justify-between border-b border-neutral-200 print:hidden">
               <h2 className="font-bold text-lg text-neutral-800">{t("printPreviewTitle")}</h2>
               <button type="button" onClick={() => setPreviewOpen(false)} className="h-8 w-8 rounded-full flex items-center justify-center text-neutral-500 hover:bg-neutral-100 hover:text-neutral-800 transition focus:outline-none focus:ring-2 focus:ring-[var(--ts-accent)]">
                 &times;
               </button>
             </div>
-            <div id="nettoit-print-preview" className="p-6 overflow-y-auto">
+            <div id="nettoit-print-preview" className="p-6 overflow-y-auto print:overflow-visible print:p-0">
               <ReportSheet data={data} breakdown={breakdown} lang={lang} />
             </div>
-            <div className="shrink-0 px-5 py-3 flex justify-end gap-3 border-t border-neutral-200 bg-neutral-50/50">
+            <div className="shrink-0 px-5 py-3 flex justify-end gap-3 border-t border-neutral-200 bg-neutral-50/50 print:hidden">
               <button type="button" onClick={() => setPreviewOpen(false)} className="px-4 py-2 rounded-lg font-semibold bg-white border border-neutral-300 text-neutral-800 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-[var(--ts-accent)]">
                 {t("close")}
               </button>
@@ -1203,7 +1306,7 @@ export default function App() {
         </div>
       ) : null}
 
-      <div className="max-w-6xl mx-auto p-4 sm:p-6">
+      <div className="max-w-6xl mx-auto p-4 sm:p-6 print:hidden">
         {/* Header */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex items-center gap-6">
@@ -1248,7 +1351,7 @@ export default function App() {
                 onClick={() => setHelpOpen(true)}
                 className={TAG_BUTTON_BASE + " h-16 w-16 bg-transparent"}
               >
-                <img src={helpIcon} alt="Help" className="h-12 w-12 object-contain" />
+                <img src={helpIcon} alt="Help" className="h-12 w-12 object-contain mix-blend-multiply" />
               </button>
             </div>
             <div className="mt-2 flex items-center justify-end gap-2">
@@ -1393,8 +1496,9 @@ export default function App() {
             </div>
           </div>
 
-          {/* Output */}
-          <div className={card}>
+          {/* Outputs Column */}
+          <div className="flex flex-col gap-4">
+            <div className={card}>
             <div className={cardPad}>
               <div className="flex items-start justify-between gap-3">
                 <div>
@@ -1466,6 +1570,32 @@ export default function App() {
                     {t("netLine")}: <span className="font-bold">{EUR(breakdown.netMonthly, locale)}</span> / {t("perMonth")}
                   </li>
                 </ul>
+              </div>
+            </div>
+          </div>
+
+            {/* Yearly Totals */}
+            <div className={card}>
+              <div className={cardPad}>
+                <div className="font-semibold text-neutral-800">{t("yearlyTotals")}</div>
+                <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                  <div className="p-3 bg-neutral-50 rounded-xl border border-neutral-100">
+                    <div className="text-xs text-neutral-500">{t("grossAnnualLabel")}</div>
+                    <div className="text-lg font-bold text-neutral-800">{EUR(breakdown.grossAnnual, locale)}</div>
+                  </div>
+                  <div className="p-3 bg-[var(--ts-accent)]/20 rounded-xl border border-[var(--ts-accent)]/30">
+                    <div className="text-xs text-neutral-700">{t("netAnnual")}</div>
+                    <div className="text-lg font-bold text-neutral-900">{EUR(breakdown.netAnnual, locale)}</div>
+                  </div>
+                  <div className="p-3 bg-white rounded-xl border border-neutral-200">
+                    <div className="text-xs text-neutral-500">{t("taxesAnnual")}</div>
+                    <div className="text-base font-semibold text-neutral-800">{EUR(breakdown.taxes.totalAnnual, locale)}</div>
+                  </div>
+                  <div className="p-3 bg-white rounded-xl border border-neutral-200">
+                    <div className="text-xs text-neutral-500">{t("socialAnnual")}</div>
+                    <div className="text-base font-semibold text-neutral-800">{EUR(breakdown.social.total * 12, locale)}</div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
